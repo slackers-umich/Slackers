@@ -8,5 +8,5 @@
 ![Team](https://user-images.githubusercontent.com/58456051/133131435-1524b8b3-cd3c-4954-aaca-497eeebb3f31.png)
 
 [demo_page]: https://youtu.be/sample
-[wiki_page]: https://github.com/member/team/wiki
+[wiki_page]: https://github.com/slackers-umich/Slackers/wiki
 [process_page]: https://trello.com/eecs441slackers
