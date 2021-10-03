@@ -9,4 +9,4 @@
 
 [demo_page]: https://youtu.be/sample
 [wiki_page]: https://github.com/slackers-umich/Slackers/wiki
-[process_page]: https://trello.com/eecs441slackers
+[process_page]: https://trello.com/b/MS8OFkDu/umich-connect
