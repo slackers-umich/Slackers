@@ -15,5 +15,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SecondActivity::class.java)
             startActivity(intent)
         }
+        val buttonConnectionsPage = findViewById<Button>(R.id.buttonConnectionsPage)
+        buttonConnectionsPage.setOnClickListener {
+            val intent = Intent(this, ConnectionsPage::class.java)
+            startActivity(intent)
+        }
+
     }
 }
