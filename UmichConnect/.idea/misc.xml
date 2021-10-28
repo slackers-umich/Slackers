@@ -5,9 +5,11 @@
       <map>
         <entry key="..\:/Users/ryank/AndroidStudioProjects/Slackers/UmichConnect/app/src/main/res/layout/activity_main.xml" value="0.10009057971014493" />
         <entry key="..\:/Users/ryank/AndroidStudioProjects/Slackers/UmichConnect/app/src/main/res/layout/activity_second.xml" value="0.10009057971014493" />
-        <entry key="app/src/main/res/layout/activity_connections_page.xml" value="0.1105072463768116" />
+        <entry key="app/src/main/res/layout/activity_connections_page.xml" value="0.32696513292832763" />
+        <entry key="app/src/main/res/layout/activity_connections_page_listview_item.xml" value="0.1105072463768116" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_second.xml" value="0.1105072463768116" />
+        <entry key="app/src/main/res/layout/listview_item.xml" value="0.1105072463768116" />
       </map>
     </option>
   </component>
