@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect">
         <activity
+            android:name=".ViewProfile"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfile"
+            android:exported="false" />
+        <activity
             android:name=".ConnectionsPage"
             android:exported="false" />
         <activity
