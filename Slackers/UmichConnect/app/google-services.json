@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "66788152882",
+    "project_id": "umichconnect-1bdfe",
+    "storage_bucket": "umichconnect-1bdfe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66788152882:android:6e45bf2bc29d9d8b350e2b",
+        "android_client_info": {
+          "package_name": "com.slackers.umichconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66788152882-mioee688cqao34r5agqv72c72r0oaag9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDftE0Um1yY5fWk3co6yI_ewOhgQg4I8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66788152882-mioee688cqao34r5agqv72c72r0oaag9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
