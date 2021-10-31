@@ -11,15 +11,23 @@ import org.json.JSONObject
 import kotlin.reflect.full.declaredMemberProperties
 
 object NearbyListUserStore {
+    private val TAG = "NearbyListUserStore"
     val nearbyusers = arrayListOf<NearbyListUser?>()
     private val nFields = NearbyListUser::class.declaredMemberProperties.size
 
     private lateinit var queue: RequestQueue
     private const val serverUrl = "https://mobapp.eecs.umich.edu/"
-    //TODO:fix serverurl, add api call to get nearby users
+    //TODO: fix serverurl, add api call to get nearby users
 
-    fun getNearbyUsers(context: Context, completion: () -> Unit) {
+    fun setNearbyUsers(context: Context, nearbyMacs: ArrayList<String?>, completion: () -> Unit) {
+        // TODO: check if array is empty --> is so make toast
+        Log.d(TAG, "setNearbyUsers()")
         nearbyusers.clear()
-        nearbyusers.add(NearbyListUser("BOb", "null"))
+        for (address in nearbyMacs) {
+            if (address != null) {
+                Log.d(TAG, address)
+            }
+        }
+        // nearbyusers.add(NearbyListUser("BOb", "null"))
     }
 }
