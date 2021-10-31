@@ -10,9 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect" >
         <activity
-            android:name=".SignInActivity"
-            android:exported="false" />
-        <activity
             android:name=".ConnectionsPage"
             android:exported="false" />
         <activity
