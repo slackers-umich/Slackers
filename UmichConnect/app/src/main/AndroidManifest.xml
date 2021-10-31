@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect">
         <activity
+            android:name=".CreateAccount"
+            android:exported="true" />
+        <activity
             android:name=".ConnectionsPage"
             android:exported="false" />
         <activity
