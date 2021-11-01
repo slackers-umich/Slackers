@@ -51,17 +51,7 @@ class NearbyActivity : AppCompatActivity() {
         val mBluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
         if (mBluetoothAdapter == null) {
             Log.e(TAG, "Device doesn't support bluetooth")
-        }
-
-        if (mBluetoothAdapter?.isEnabled == false) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            { result: ActivityResult ->
-                if (result.resultCode != Activity.RESULT_OK) {
-                    Log.e(TAG, "Bluetooth enabled failed")
-                }
-            }
-            startForResult.launch(enableBtIntent)
+            finish()
         }
 
         // Register for broadcasts when a device is discovered.
@@ -75,6 +65,18 @@ class NearbyActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        if (!mBluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            { result: ActivityResult ->
+                if (result.resultCode != Activity.RESULT_OK) {
+                    Log.e(TAG, "Bluetooth enabled failed")
+                    finish()
+                }
+            }
+            startForResult.launch(enableBtIntent)
+        }
 
         refreshTimeline()
     }
@@ -114,6 +116,7 @@ class NearbyActivity : AppCompatActivity() {
                         runOnUiThread {
                             // inform the list adapter that data set has changed
                             // so that it can redraw the screen.
+                            Log.d(TAG, "setNearbyUsers() completed")
                             nearbyListAdapter.notifyDataSetChanged()
                         }
                         // stop the refreshing animation upon completion:
@@ -125,8 +128,8 @@ class NearbyActivity : AppCompatActivity() {
     }
 
     private fun refreshTimeline() {
-        // TODO: don't refresh if still looking
         Log.d(TAG, "refreshTimeline()")
+        view.refreshContainer.isRefreshing = true
         doDiscovery()
     }
 
