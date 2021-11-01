@@ -92,7 +92,7 @@ class CreateAccountActivity : AppCompatActivity() {
             .addOnCompleteListener(this, OnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Successfully Registered", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, NearbyActivity::class.java)
                     val user = Firebase.auth.currentUser
                     if (user != null) {
                         uploadImageToFirebase(imageUri, user.uid)
