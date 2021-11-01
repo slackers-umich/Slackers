@@ -1,14 +1,16 @@
 package com.slackers.umichconnect
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.ktx.Firebase
 
 
-class EditProfile : AppCompatActivity() {
+class EditProfileActivity : AppCompatActivity() {
 
     lateinit var etName: EditText
     lateinit var etMajor:EditText
@@ -80,15 +82,35 @@ class EditProfile : AppCompatActivity() {
 
             // Input is valid, here send data to your server
 
-            val name = etName.text.toString()
-            val major = etMajor.text.toString()
-            val year = etYear.text.toString()
-            val interests = etInterests.text.toString()
-            val aboutMe = etAboutMe.text.toString()
+            val user_name = etName.text.toString()
+            val user_major = etMajor.text.toString()
+            val user_year = etYear.text.toString()
+            val user_interests = etInterests.text.toString()
+            val user_aboutMe = etAboutMe.text.toString()
 
             Toast.makeText(this,"Profile Update Successfully",Toast.LENGTH_SHORT).show()
             // Here you can call you API
-            //TODO API CALL
+            //API CALL
+
+            val user = Firebase.auth.currentUser
+            val profileUpdates = userProfileChangeRequest {
+                name = user_name
+                major = user_major
+                year = user_year
+                interests = user_interests
+                aboutMe = user_aboutMe
+            }
+            user!!.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        Log.d(TAG, "User Profile Updated.")
+                    }
+                    else{
+                        Log.d(TAG, "User Profile Update Failed.")
+                    }
+                    val intent = Intent(this, ViewProfileActivity::class.java)
+                    startActivity(intent)
+                }
         }
     }
 
