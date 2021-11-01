@@ -19,7 +19,7 @@ class SecondActivity: AppCompatActivity() {
 //        val adapter = ArrayAdapter(this,
 //            R.layout.activity_accept_decline_listview_item, array)
 //
-        val listView: ListView = findViewById(R.id.listview_2)
+        val listView: ListView = findViewById(R.id.accept_decline_listview)
         listView.adapter = MyCustomAdapter(this)
 //        listView.setAdapter(adapter)
 
@@ -52,7 +52,7 @@ class SecondActivity: AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(mContext)
             val rowMain = layoutInflater.inflate(R.layout.row_accept_decline, viewGroup, false)
 
-            val nametextView = rowMain.findViewById<TextView>(R.id.textView)
+            val nametextView = rowMain.findViewById<TextView>(R.id.accept_decline_name)
             nametextView.text = names.get(position)
 
 
