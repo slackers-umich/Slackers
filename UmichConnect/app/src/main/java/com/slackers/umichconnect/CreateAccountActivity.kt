@@ -48,12 +48,12 @@ class CreateAccountActivity : AppCompatActivity() {
 
 
         val currentUser = auth.currentUser
-        /*
+
         if (currentUser != null){
-            val intent = Intent(this, ConnectionsPage::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-        */
+
         val getResult =
             registerForActivityResult(
                 ActivityResultContracts.StartActivityForResult()
