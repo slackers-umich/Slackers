@@ -46,6 +46,14 @@ class CreateAccountActivity : AppCompatActivity() {
         val changePfpText = findViewById<TextView>(R.id.changePfpCreateAccount)
         val signUpButt = findViewById<Button>(R.id.signUpCreateAccount)
 
+
+        val currentUser = auth.currentUser
+        /*
+        if (currentUser != null){
+            val intent = Intent(this, ConnectionsPage::class.java)
+            startActivity(intent)
+        }
+        */
         val getResult =
             registerForActivityResult(
                 ActivityResultContracts.StartActivityForResult()
@@ -66,7 +74,7 @@ class CreateAccountActivity : AppCompatActivity() {
 
 
     }
-
+    //uploads image to firebase storage
     private fun uploadImageToFirebase(imageUri: Uri?, userId: String){
         imagePath = "users/$userId/profile.jpg"
         val fileReference = storageRef.child(imagePath!!)
@@ -74,6 +82,7 @@ class CreateAccountActivity : AppCompatActivity() {
             fileReference.putFile(imageUri)
         }
     }
+    //creates the account through the firebase authentication
     private fun accountCreation(email: String, password: String, name: String, bio: String) {
         val wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
         val mac = wifiManager.connectionInfo.macAddress
@@ -116,7 +125,7 @@ class CreateAccountActivity : AppCompatActivity() {
                 }
             })
     }
-
+    //writes the user into the firebase
     private fun writeNewUser(
         userId: String,
         name: String,
