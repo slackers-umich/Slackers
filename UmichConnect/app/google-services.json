@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "370934154214",
+    "firebase_url": "https://umichconnect-f4dbb-default-rtdb.firebaseio.com",
+    "project_id": "umichconnect-f4dbb",
+    "storage_bucket": "umichconnect-f4dbb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370934154214:android:151f3942ef45f9a198cc27",
+        "android_client_info": {
+          "package_name": "com.slackers.umichconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "370934154214-3e06f2n6ilramvp3lsbek1are5rnkn0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm3Dz63_x_xYI_MHifKE4r6vDxijZOups"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "370934154214-3e06f2n6ilramvp3lsbek1are5rnkn0r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
