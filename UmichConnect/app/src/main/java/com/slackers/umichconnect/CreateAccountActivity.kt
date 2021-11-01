@@ -50,7 +50,7 @@ class CreateAccountActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
 
         if (currentUser != null){
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, NearbyActivity::class.java)
             startActivity(intent)
         }
 
