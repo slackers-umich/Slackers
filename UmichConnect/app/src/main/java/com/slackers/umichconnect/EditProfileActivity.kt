@@ -90,6 +90,7 @@ class EditProfileActivity : AppCompatActivity() {
 
             Toast.makeText(this,"Profile Update Successfully",Toast.LENGTH_SHORT).show()
             // Here you can call you API
+<<<<<<< Updated upstream:UmichConnect/app/src/main/java/com/slackers/umichconnect/EditProfileActivity.kt
             //API CALL
 
             val user = Firebase.auth.currentUser
@@ -111,6 +112,10 @@ class EditProfileActivity : AppCompatActivity() {
                     val intent = Intent(this, ViewProfileActivity::class.java)
                     startActivity(intent)
                 }
+=======
+            //TODO API CALL
+
+>>>>>>> Stashed changes:UmichConnect/app/src/main/java/com/slackers/umichconnect/EditProfile.kt
         }
     }
 
