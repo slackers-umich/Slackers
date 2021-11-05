@@ -11,16 +11,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect">
+<<<<<<< Updated upstream
 
+=======
         <activity
-            android:name=".SecondActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"/>
+            android:name=".EditProfile"
+            android:exported="true"
+            android:label="@string/title_activity_edit_profile"
+            android:theme="@style/Theme.UmichConnect.NoActionBar" />
         <activity
             android:name=".CreateAccountActivity"
-            android:exported="true">
+            android:exported="true"/>
+        <activity
+            android:name=".ViewProfile"
+            android:exported="true" />
+        <activity
+            android:name=".NearbyActivity"
+            android:exported="true" />
+>>>>>>> Stashed changes
+        <activity
+            android:name=".ConnectionsPage"
+            android:exported = "true"/>
+
+        <activity
+            android:name=".MainActivity"
+<<<<<<< Updated upstream
+            android:exported="true"/>
+=======
+            android:exported="true" />
+
+>>>>>>> Stashed changes
+        <activity
+            android:name=".SecondActivity"
+            android:exported="true" >
+            android:name=".ConnectionsPage"
+            android:exported = "true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
