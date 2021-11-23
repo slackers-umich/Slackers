@@ -80,7 +80,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <com.google.android.material.textfield.TextInputLayout
+            <!--<com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_major"
                 android:layout_width="0dp"
                 app:layout_constraintWidth_percent="0.7"
@@ -159,7 +159,7 @@
                     android:textSize="15sp"
                     />
             </com.google.android.material.textfield.TextInputLayout>
-
+            -->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_about_me"
@@ -170,7 +170,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="14dp"
                 android:textColorHint="#808080"
-                app:layout_constraintTop_toBottomOf="@+id/layout_interests"
+                app:layout_constraintTop_toBottomOf="@+id/layout_name"
                 >
 
                 <EditText
@@ -188,12 +188,36 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <ImageView
+                android:id="@+id/pfpCreateAccount"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="36dp"
+                app:layout_constraintBottom_toTopOf="@+id/layout_about_me"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/changePfpCreateAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Profile Picture"
+                android:textColor = "#155BEA"
+                app:layout_constraintBottom_toTopOf="@+id/pfpCreateAccount"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pfpCreateAccount"
+                android:clickable="true"/>
 
             <Button
-                android:id="@+id/bt_register"
+                android:id="@+id/updateAccount"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                app:layout_constraintTop_toBottomOf="@+id/layout_about_me"
+                app:layout_constraintTop_toBottomOf="@+id/changePfpCreateAccount"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="Update Profile"
