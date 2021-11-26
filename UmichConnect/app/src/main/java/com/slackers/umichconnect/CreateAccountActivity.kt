@@ -1,6 +1,7 @@
 package com.slackers.umichconnect
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -16,9 +17,14 @@ import com.google.firebase.ktx.Firebase
 
 import android.net.wifi.WifiManager
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.auth.FirebaseUser
+
+
+
 
 
 @IgnoreExtraProperties
@@ -45,6 +51,7 @@ class CreateAccountActivity : AppCompatActivity() {
         val imageUpload = findViewById<ImageView>(R.id.pfpCreateAccount)
         val changePfpText = findViewById<TextView>(R.id.changePfpCreateAccount)
         val signUpButt = findViewById<Button>(R.id.signUpCreateAccount)
+        val loginButt = findViewById<Button>(R.id.loginButtonRedirect)
 
 
         val currentUser = auth.currentUser
@@ -67,12 +74,25 @@ class CreateAccountActivity : AppCompatActivity() {
             val openGalleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             getResult.launch(openGalleryIntent)
         }
+        loginButt.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
         signUpButt.setOnClickListener {
             accountCreation(emailField.getText().toString(), passField.getText().toString(),
                 nameField.getText().toString(), bioField.getText().toString())
         }
+    }
 
-
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        //if user is signed in already, redirect them to the NearbyActivity page
+        if(currentUser != null){
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
     }
     //uploads image to firebase storage
     private fun uploadImageToFirebase(imageUri: Uri?, userId: String){
@@ -118,7 +138,7 @@ class CreateAccountActivity : AppCompatActivity() {
                         }
 
 
-                    startActivity(intent)
+                    //startActivity(intent)
                     finish()
                 } else {
                     Toast.makeText(this, "Registration Failed", Toast.LENGTH_LONG).show()

@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect">
         <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
+        <activity
             android:name=".EditProfile"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"
