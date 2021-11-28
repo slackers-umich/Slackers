@@ -25,8 +25,6 @@ class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
-    private val mBluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    val nearbyMacs = arrayListOf<String?>()
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -79,53 +77,23 @@ class NearbyActivity : AppCompatActivity() {
             startForResult.launch(enableBtIntent)
         }
 
+        // TODO: call getCurrentLocation()
         refreshTimeline()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // TODO: call requestLocationUpdates()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
-        // Make sure we're not doing discovery anymore
-        mBluetoothAdapter.cancelDiscovery()
-
-        // Don't forget to unregister the ACTION_FOUND receiver.
-        unregisterReceiver(mReceiver)
+        stopLocationUpdates()
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    private val mReceiver = object : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent) {
-            val action: String? = intent.action
-            when(action) {
-                BluetoothDevice.ACTION_FOUND -> {
-                    Log.d(TAG, "device found")
-                    // Discovery has found a device. Get the BluetoothDevice
-                    // object and its info from the Intent.
-                    val device: BluetoothDevice? =
-                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    if (device != null) {
-                        val deviceHardwareAddress = device.address // MAC address
-                        // TODO: check for duplicate mac addresses
-                        nearbyMacs.add(deviceHardwareAddress)
-                        Log.d(TAG, deviceHardwareAddress)
-                    }
-                }
-                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    Log.d(TAG, "scan finished")
-                    setNearbyUsers(applicationContext, nearbyMacs) {
-                        runOnUiThread {
-                            // inform the list adapter that data set has changed
-                            // so that it can redraw the screen.
-                            Log.d(TAG, "setNearbyUsers() completed")
-                            nearbyListAdapter.notifyDataSetChanged()
-                        }
-                        // stop the refreshing animation upon completion:
-                        view.refreshContainer.isRefreshing = false
-                    }
-                }
-            }
-        }
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun refreshTimeline() {
@@ -135,19 +103,23 @@ class NearbyActivity : AppCompatActivity() {
     }
 
     /**
-     * Start device discover with the BluetoothAdapter
+     * Find nearby users given device location
      */
     private fun doDiscovery() {
         Log.d(TAG, "doDiscovery()")
 
-        // If we're already discovering, stop it
-        if (mBluetoothAdapter.isDiscovering() ?: false) {
-            mBluetoothAdapter.cancelDiscovery()
+        // TODO: make api call to get nearby users using coordinates
+
+        // TODO: change nearbyMacs to be result of api call
+        setNearbyUsers(applicationContext, nearbyMacs) {
+            runOnUiThread {
+                // inform the list adapter that data set has changed
+                // so that it can redraw the screen.
+                Log.d(TAG, "setNearbyUsers() completed")
+                nearbyListAdapter.notifyDataSetChanged()
+            }
+            // stop the refreshing animation upon completion:
+            view.refreshContainer.isRefreshing = false
         }
-
-        nearbyMacs.clear()
-
-        // Request discover from BluetoothAdapter
-        mBluetoothAdapter.startDiscovery()
     }
 }
