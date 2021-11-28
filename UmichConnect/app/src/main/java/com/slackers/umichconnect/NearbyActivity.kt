@@ -9,7 +9,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,12 +21,16 @@ import com.slackers.umichconnect.databinding.ActivityNearbyBinding
 import android.util.Log
 import com.slackers.umichconnect.NearbyListUserStore.setNearbyUsers
 import android.view.View
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 
 class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -40,45 +46,53 @@ class NearbyActivity : AppCompatActivity() {
             refreshTimeline()
         }
 
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (!granted) {
-                Log.d(TAG, "Fine location access denied")
-                finish()
-            }
-        }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        val mBluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-        if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Device doesn't support bluetooth")
-            finish()
+        // TODO: request background location?
+        // https://developer.android.com/training/location/permissions#request-background-location
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                requestcode
+            )
         }
+//        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+//            if (!granted) {
+//                Log.d(TAG, "Fine location access denied")
+//                finish()
+//            }
+//        }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
-        // Register for broadcasts when a device is discovered.
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        registerReceiver(mReceiver, filter)
-
-        // Register for broadcasts when discovery has finished
-        val filter2 = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-        registerReceiver(mReceiver, filter2)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
     override fun onStart() {
         super.onStart()
 
-        if (!mBluetoothAdapter.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            { result: ActivityResult ->
-                if (result.resultCode != Activity.RESULT_OK) {
-                    Log.e(TAG, "Bluetooth enabled failed")
-                    finish()
-                }
-            }
-            startForResult.launch(enableBtIntent)
-        }
-
         // TODO: call getCurrentLocation()
-        refreshTimeline()
+        fusedLocationClient.getCurrentLocation()
+            .addOnSuccessListener { location : Location? ->
+                if (location != null) {
+                    refreshTimeline()
+                }
+                // TODO: handle if null
+            }
     }
 
     override fun onResume() {
