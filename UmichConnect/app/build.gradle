@@ -32,15 +32,6 @@ android {
 }
 
 dependencies {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'io.coil-kt:coil:1.3.2'
@@ -48,7 +39,6 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
->>>>>>> Stashed changes
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
