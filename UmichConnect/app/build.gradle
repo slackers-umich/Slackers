@@ -34,8 +34,11 @@ android {
 dependencies {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     implementation 'com.github.bumptech.glide:glide:4.12.0'
