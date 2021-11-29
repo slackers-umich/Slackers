@@ -46,9 +46,9 @@ class ViewProfile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Bundle b = getIntent().getExtras();
-        var profile_id = -1;
+        var profile_id = "-1";
         if(savedInstanceState!=null){
-            profile_id = savedInstanceState.getInt("profile_id");
+            profile_id = savedInstanceState.getString("profile_id").toString();
         }
         setContentView(R.layout.activity_view_profile)
 
@@ -68,7 +68,7 @@ class ViewProfile : AppCompatActivity() {
 
 
         //api call to get profile info from database
-        val name: TextView = findViewById<TextView>(R.id.et_first_name) as TextView;
+        val name: TextView = findViewById<TextView>(R.id.et_name) as TextView;
         name.text = user?.name ?: "";
         //load their image
         val imageView = findViewById<ImageView>(R.id.rImage)
