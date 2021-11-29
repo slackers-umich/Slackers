@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -20,6 +21,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.ktx.auth
 
 // new since Glide v4
 @GlideModule
@@ -83,6 +85,29 @@ class ViewProfileActivity : AppCompatActivity() {
         interests.text = userRecord.interests;*/
         val aboutMe: TextView = findViewById<TextView>(R.id.et_about_me) as TextView;
         aboutMe.text = user?.bio ?: "";
+
+        val connectButton = findViewById<Button>(R.id.connectionRequest)
+
+        connectButton.setOnClickListener {
+            sendConnection(profile_id, findViewById<TextView>(R.id.et_connectionMessage).getText().toString())
+            finish()
+        }
+
+    }
+
+
+    private fun sendConnection(writeId: String, message: String) {
+        val user = Firebase.auth.currentUser
+        val userId = user?.uid
+
+        database = Firebase.database.reference
+
+        if (userId != null) {
+            
+            database.child("users").child(writeId).child("pending").child(userId).setValue(message)
+
+        }
+
 
     }
 }
