@@ -13,11 +13,7 @@
             android:name=".OwnProfileActivity"
             android:exported="false" />
         <activity
-<<<<<<< Updated upstream
-            android:name=".CreateProfile"
-            android:exported="false" />
-        <activity
-            android:name=".ViewProfile"
+            android:name=".ViewProfileActivity"
             android:exported="false" />
         <activity
             android:name=".EditProfileActivity"
@@ -25,15 +21,8 @@
         <activity
             android:name=".ConnectionsPage"
             android:exported="false" />
-=======
-            android:name=".EditProfileActivity"
-            android:exported="true"
-            android:label="@string/title_activity_edit_profile"
-            android:theme="@style/Theme.UmichConnect.NoActionBar" />
-        <activity
-            android:name=".NearbyActivity"
-            android:exported="true" />
->>>>>>> Stashed changes
+
+
         <activity
             android:name=".SecondActivity"
             android:exported="true" />
