@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices
 
 class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
+    private val PERMISSION_REQUEST_CODE = 1
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -56,20 +57,13 @@ class NearbyActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
-                requestcode
+                PERMISSION_REQUEST_CODE
             )
         }
 //        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -114,6 +108,38 @@ class NearbyActivity : AppCompatActivity() {
         Log.d(TAG, "refreshTimeline()")
         view.refreshContainer.isRefreshing = true
         doDiscovery()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                    Log.d(TAG, "Location permissions granted")
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the features requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    // TODO: add toast to do above
+                    Log.e(TAG, "Location permissions denied")
+                    finish()
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
     /**
