@@ -2,6 +2,7 @@
 package com.slackers.umichconnect
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -13,11 +14,18 @@ import com.slackers.umichconnect.databinding.ActivityNearbyBinding
 import android.util.Log
 import com.slackers.umichconnect.NearbyListUserStore.setNearbyUsers
 import androidx.core.app.ActivityCompat
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,6 +36,9 @@ class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
     private val PERMISSION_REQUEST_CODE = 1
     private var currentLocation: Location? = null
+    private var storageRef = FirebaseStorage.getInstance().reference
+    private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
     private lateinit var locationCallback: LocationCallback
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
@@ -39,6 +50,13 @@ class NearbyActivity : AppCompatActivity() {
         view = ActivityNearbyBinding.inflate(layoutInflater)
         view.root.setBackgroundColor(Color.parseColor("#E0E0E0"))
         setContentView(view.root)
+
+        auth = FirebaseAuth.getInstance()
+        database = Firebase.database.reference
+        if (auth.currentUser == null){
+            val intent = Intent(this, CreateAccountActivity::class.java)
+            startActivity(intent)
+        }
 
         nearbyListAdapter = NearbyListAdapter(this, nearbyusers)
         view.nearbyListView.setAdapter(nearbyListAdapter)
@@ -83,11 +101,18 @@ class NearbyActivity : AppCompatActivity() {
                     return
                 }
                 for (location in locationResult.locations) {
+                    val lat = location.latitude
+                    val lng = location.longitude
                     Log.d(TAG,
-                        "New location received: " + location.latitude + "," + location.longitude)
+                        "New location received: $lat,$lng"
+                    )
                     if (significantMove(location)) {
                         Log.d(TAG, "Significant location change")
-                        // TODO: update location in db
+                        // update location in db as Geohash
+                        val currentUser = auth.currentUser
+                        val hash: String = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
+                        database.child("users").child(currentUser!!.uid)
+                            .child("location").setValue(hash)
                         currentLocation = location
                         refreshTimeline()
                     }
@@ -99,7 +124,6 @@ class NearbyActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        // TODO: call getCurrentLocation()
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
