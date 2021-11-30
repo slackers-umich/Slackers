@@ -30,6 +30,10 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import com.google.firebase.database.DataSnapshot
+
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DatabaseError
 
 
 class NearbyActivity : AppCompatActivity() {
@@ -52,7 +56,7 @@ class NearbyActivity : AppCompatActivity() {
         setContentView(view.root)
 
         auth = FirebaseAuth.getInstance()
-        database = Firebase.database.reference
+        database = Firebase.database.getReference("users")
         if (auth.currentUser == null){
             val intent = Intent(this, CreateAccountActivity::class.java)
             startActivity(intent)
@@ -111,9 +115,9 @@ class NearbyActivity : AppCompatActivity() {
                         // update location in db
                         val currentUser = auth.currentUser
 //                        val hash: String = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
-                        database.child("users").child(currentUser!!.uid)
+                        database.child(currentUser!!.uid)
                             .child("latitude").setValue(lat)
-                        database.child("users").child(currentUser.uid)
+                        database.child(currentUser.uid)
                             .child("longitude").setValue(lng)
                         currentLocation = location
                         refreshTimeline()
@@ -242,6 +246,64 @@ class NearbyActivity : AppCompatActivity() {
         Log.d(TAG, "doDiscovery()")
 
         // TODO: make api call to get nearby users using coordinates
+        if (currentLocation == null) {
+            Log.e(TAG, "Location is null, can't do discovery")
+            return
+        }
+        val nearbyLat = mutableSetOf<String>()
+        val nearbyLng = mutableSetOf<String>()
+        val lat = currentLocation!!.latitude
+        val lng = currentLocation!!.latitude
+        val startLat = lat - 0.001
+        val endLat = lat + 0.001
+        val startLng = lng - 0.001
+        val endLng = lng + 0.001
+        database.orderByChild("latitude").startAt(startLat).endAt(endLat)
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                    Log.d(TAG, "Nearby lat user found: ${dataSnapshot.key}")
+                    dataSnapshot.key?.let { nearbyLat.add(it) }
+                } // ...
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+        database.orderByChild("longitude").startAt(startLng).endAt(endLng)
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                    Log.d(TAG, "Nearby lng user found: ${dataSnapshot.key}")
+                    dataSnapshot.key?.let { nearbyLng.add(it) }
+                } // ...
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
 
         // TODO: change nearbyMacs to be result of api call
 //        setNearbyUsers(applicationContext, nearbyMacs) {
