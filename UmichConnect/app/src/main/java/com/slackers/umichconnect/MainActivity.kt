@@ -12,7 +12,10 @@ class MainActivity : AppCompatActivity() {
 
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
+
+            val intent = Intent(this, ViewProfileActivity::class.java)
+            intent.apply{putExtra("profile_id", "bdHHGC8zcCXzqpMJhSFDOAMCYnp1")}
+
             startActivity(intent)
         }
         val buttonConnectionsPage = findViewById<Button>(R.id.buttonConnectionsPage)

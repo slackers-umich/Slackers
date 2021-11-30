@@ -165,7 +165,7 @@ class EditProfileActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
+    
         private fun writeNewUser(
             userId: String,
             name: String,

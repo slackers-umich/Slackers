@@ -166,6 +166,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_about_me"
                 android:layout_width="0dp"
+                app:helperText="About Me"
                 app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -179,7 +180,7 @@
                     android:id="@+id/et_about_me"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="About Me"
+                    android:text="Some Info"
                     android:gravity="center"
                     android:padding="10dp"
                     android:textColor="#000000"
@@ -202,7 +203,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/layout_about_me"
                 >
 
-                <TextView
+
+                <EditText
+
                     android:id="@+id/et_connectionMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
