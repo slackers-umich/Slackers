@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 
+/*
 class ViewProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,4 +36,4 @@ class ViewProfileActivity : AppCompatActivity() {
         aboutMe.text = userRecord.about_me;
 
     }
-}
+}*/

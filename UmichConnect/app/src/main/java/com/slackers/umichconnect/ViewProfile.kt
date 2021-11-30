@@ -1,3 +1,4 @@
+/*
 package com.slackers.umichconnect
 
 import android.content.Context
@@ -75,14 +76,16 @@ class ViewProfile : AppCompatActivity() {
         Glide.with(this)
             .load(user?.photoUri)
             .into(imageView)
-        /*val major: TextView = findViewById<TextView>(R.id.et_major) as TextView;
+        */
+/*val major: TextView = findViewById<TextView>(R.id.et_major) as TextView;
         major.text = userRecord.major;
         val year: TextView = findViewById<TextView>(R.id.et_year) as TextView;
         year.text = userRecord.year;
         val interests: TextView = findViewById<TextView>(R.id.et_interests) as TextView;
-        interests.text = userRecord.interests;*/
+        interests.text = userRecord.interests;*//*
+
         val aboutMe: TextView = findViewById<TextView>(R.id.et_about_me) as TextView;
         aboutMe.text = user?.bio ?: "";
 
     }
-}
+}*/

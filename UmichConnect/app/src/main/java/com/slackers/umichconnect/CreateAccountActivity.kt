@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser
 
 @IgnoreExtraProperties
 data class User(val email: String? = null, val name: String? = null,
-                val bio: String? = null, val macAddr: String? = null, val photoUri: String? = null) {
+                val bio: String? = null, val photoUri: String? = null, val location: String? = null) {
     // Null default values create a no-argument default constructor, which is needed
     // for deserialization from a DataSnapshot.
 }
@@ -104,10 +104,6 @@ class CreateAccountActivity : AppCompatActivity() {
     }
     //creates the account through the firebase authentication
     private fun accountCreation(email: String, password: String, name: String, bio: String) {
-        val wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
-        val mac = wifiManager.connectionInfo.macAddress
-
-
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, OnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -131,15 +127,12 @@ class CreateAccountActivity : AppCompatActivity() {
                                     val email = user.email.toString()
                                     val uid = user.uid
                                     val photoUri = user.photoUrl.toString()
-                                    writeNewUser(uid, name, email, bio, mac, imagePath.toString())
+                                    writeNewUser(uid, name, email, bio, imagePath.toString(), "")
 
                                 }
                             }
                         }
-
-
-                    //startActivity(intent)
-                    finish()
+                    startActivity(intent)
                 } else {
                     Toast.makeText(this, "Registration Failed", Toast.LENGTH_LONG).show()
                 }
@@ -151,11 +144,11 @@ class CreateAccountActivity : AppCompatActivity() {
         name: String,
         email: String,
         bio: String,
-        macAddr: String,
-        photoUri: String
+        photoUri: String,
+        location: String
     ) {
         database = Firebase.database.reference
-        val user = User(email, name, bio, macAddr, photoUri)
+        val user = User(email, name, bio, photoUri, location)
 
         database.child("users").child(userId).setValue(user)
     }
