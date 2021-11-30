@@ -108,11 +108,13 @@ class NearbyActivity : AppCompatActivity() {
                     )
                     if (significantMove(location)) {
                         Log.d(TAG, "Significant location change")
-                        // update location in db as Geohash
+                        // update location in db
                         val currentUser = auth.currentUser
-                        val hash: String = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
+//                        val hash: String = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
                         database.child("users").child(currentUser!!.uid)
-                            .child("location").setValue(hash)
+                            .child("latitude").setValue(lat)
+                        database.child("users").child(currentUser.uid)
+                            .child("longitude").setValue(lng)
                         currentLocation = location
                         refreshTimeline()
                     }

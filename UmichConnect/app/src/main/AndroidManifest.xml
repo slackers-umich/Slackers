@@ -34,13 +34,13 @@
             android:name=".SecondActivity"
             android:exported="true" />
         <activity
-            android:name=".MainActivity"
-            android:exported="true" />
-        <activity
             android:name=".CreateAccountActivity"
             android:exported="true" />
         <activity
             android:name=".NearbyActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
