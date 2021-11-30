@@ -14,8 +14,6 @@ import com.slackers.umichconnect.databinding.ActivityNearbyBinding
 import android.util.Log
 import com.slackers.umichconnect.NearbyListUserStore.setNearbyUsers
 import androidx.core.app.ActivityCompat
-import com.firebase.geofire.GeoFireUtils
-import com.firebase.geofire.GeoLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
@@ -151,6 +149,17 @@ class NearbyActivity : AppCompatActivity() {
         fusedLocationClient.getCurrentLocation(PRIORITY_BALANCED_POWER_ACCURACY, cts.token)
             .addOnSuccessListener { location : Location? ->
                 if (location != null) {
+                    // update location in db
+                    val lat = location.latitude
+                    val lng = location.longitude
+                    Log.d(TAG,
+                        "Current location received: $lat,$lng"
+                    )
+                    val currentUser = auth.currentUser
+                    database.child(currentUser!!.uid)
+                        .child("latitude").setValue(lat)
+                    database.child(currentUser.uid)
+                        .child("longitude").setValue(lng)
                     currentLocation = location
                     refreshTimeline()
                 }
@@ -253,11 +262,13 @@ class NearbyActivity : AppCompatActivity() {
         val nearbyLat = mutableSetOf<String>()
         val nearbyLng = mutableSetOf<String>()
         val lat = currentLocation!!.latitude
-        val lng = currentLocation!!.latitude
+        val lng = currentLocation!!.longitude
         val startLat = lat - 0.001
         val endLat = lat + 0.001
         val startLng = lng - 0.001
         val endLng = lng + 0.001
+        Log.d(TAG, "lat range: $startLat - $endLat")
+        Log.d(TAG, "lng range: $startLng - $endLng")
         database.orderByChild("latitude").startAt(startLat).endAt(endLat)
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
