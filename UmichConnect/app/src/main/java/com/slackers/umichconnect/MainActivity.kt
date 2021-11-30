@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            val intent = Intent(this, CreateAccountActivity::class.java)
+            val intent = Intent(this, testNotifsActivity::class.java)
             startActivity(intent)
         }
         val buttonConnectionsPage = findViewById<Button>(R.id.buttonConnectionsPage)

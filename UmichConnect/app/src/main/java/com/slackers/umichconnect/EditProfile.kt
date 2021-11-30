@@ -1,3 +1,4 @@
+/*
 package com.slackers.umichconnect
 
 import android.widget.*
@@ -100,7 +101,8 @@ class EditProfileActivity : AppCompatActivity() {
                 etName.setError("Please Enter Your Name")
                 return false
             }
-            /*if (etMajor.text.toString().equals("")) {
+            */
+/*if (etMajor.text.toString().equals("")) {
                 etMajor.setError("Please Enter Your Major")
                 return false
             }
@@ -111,16 +113,19 @@ class EditProfileActivity : AppCompatActivity() {
             if (etInterests.text.toString().equals("")) {
                 etInterests.setError("Please Enter Your Main Interests")
                 return false
-            }*/
+            }*//*
+
             if (etAboutMe.text.toString().equals("")) {
                 etAboutMe.setError("Please Fill the About Me section")
                 return false
             }
             // checking the proper email format
-            /*if (!isEmailValid(etEmail.text.toString())) {
+            */
+/*if (!isEmailValid(etEmail.text.toString())) {
                 etEmail.setError("Please Enter Valid Email")
                 return false
-            }*/
+            }*//*
+
 
 
             return true
@@ -177,4 +182,4 @@ class EditProfileActivity : AppCompatActivity() {
             database.child("users").child(userId).setValue(user)
         }
     }
-}
+}*/
