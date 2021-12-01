@@ -13,7 +13,8 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        val intent = Intent(this, LocationUpdateService::class.java)
+        startService(intent)
         var uid: String? = null
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
