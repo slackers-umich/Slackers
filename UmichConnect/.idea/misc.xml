@@ -5,26 +5,24 @@
       <map>
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_accept_decline_listview_item.xml" value="0.1875" />
-<<<<<<< Updated upstream
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_after_notification.xml" value="0.22" />
-=======
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_after_notification.xml" value="0.20520833333333333" />
->>>>>>> Stashed changes
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page_listview_item.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_create_account.xml" value="0.33" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_edit_profile.xml" value="0.38368860055607046" />
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_login.xml" value="0.20108695652173914" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_main.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_nearby.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_second.xml" value="0.1875" />
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_test_notifs.xml" value="0.2694746376811594" />
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_view_profile.xml" value="0.2857142857142857" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_view_profile.xml" value="0.175" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/content_edit_profile.xml" value="0.1875" />
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/fragment_first.xml" value="0.2694746376811594" />
-        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/fragment_first2.xml" value="0.20108695652173914" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/listitem_nearby.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/row_accept_decline.xml" value="0.1875" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/activity_anon_nearby.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/activity_create_account.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/activity_edit_profile.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/activity_nearby.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/listitem_nearby.xml" value="0.25" />
+        <entry key="..\:/Users/dgkda/OneDrive/Documents/EECS_441/Slackers/UmichConnect/app/src/main/res/layout/listitem_nearby_anon.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/ryank/AndroidStudioProjects/Slackers/UmichConnect/app/src/main/res/layout/activity_accept_decline_listview_item.xml" value="0.1" />
         <entry key="..\:/Users/ryank/AndroidStudioProjects/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page.xml" value="0.1" />
         <entry key="..\:/Users/ryank/AndroidStudioProjects/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page_listview_item.xml" value="0.1" />

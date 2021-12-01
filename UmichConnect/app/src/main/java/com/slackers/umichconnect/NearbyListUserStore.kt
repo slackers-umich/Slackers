@@ -28,11 +28,17 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
     private lateinit var auth: FirebaseAuth
 
     fun setNearbyUsers(context: Context, nearby: Set<String>, completion: () -> Unit) {
-        // TODO: check if set is empty --> is so make toast about no users in area
+        nearbyusers.clear()
+        if (nearby.isEmpty()) {
+            // TODO: make toast about no users in area
+            mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
+                .setValue(nearbyusersIds)
+            completion()
+            return
+        }
         Log.d(TAG, "setNearbyUsers()")
         mDatabase = Firebase.database.getReference("users")
         auth = FirebaseAuth.getInstance()
-        nearbyusers.clear()
         var n = nearby.size
         mDatabase.child("${auth.currentUser!!.uid}/connections").get()
             .addOnCompleteListener {
@@ -64,5 +70,33 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
                     }
                 }
             }
+    }
+
+    fun setNearbyUsersAnon(context: Context, nearby: Set<String>, completion: () -> Unit) {
+        nearbyusers.clear()
+        if (nearby.isEmpty()) {
+            // TODO: make toast about no users in area
+            completion()
+            return
+        }
+        Log.d(TAG, "setNearbyUsersAnon()")
+        mDatabase = Firebase.database.getReference("users")
+        val n = nearby.size
+        nearby.forEach {
+            var name: String = ""
+            var imgUrl: String = ""
+            mDatabase.child(it).get().addOnSuccessListener {
+                name = it.child("name").value.toString()
+                imgUrl = it.child("photoUri").value.toString()
+                Log.d(TAG, "Got name $name")
+                nearbyusers.add(NearbyListUser(it.key.toString(), name, imgUrl))
+                nearbyusersIds.add(it.key.toString())
+                if (nearbyusers.size == n) {
+                    completion()
+                }
+            }.addOnFailureListener{
+                Log.e(TAG, "Error getting user info from firebase", it)
+            }
+        }
     }
 }
