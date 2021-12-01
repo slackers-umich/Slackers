@@ -1,5 +1,6 @@
 package com.slackers.umichconnect
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -98,6 +99,7 @@ class LocationUpdateService : Service() {
     }
 
 
+    @SuppressLint("WrongConstant")
     private fun createNotification() {
         val intent2 = Intent(this, NearbyActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -111,11 +113,12 @@ class LocationUpdateService : Service() {
             notificationManager.createNotificationChannel(notificationChannel)
 
             builder = Notification.Builder(this, channelId)
-                .setContent(contentView)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentTitle("Umich Connect")
+                .setContentText("There are new users in the area")
         }
         notificationManager.notify(1234, builder.build())
     }
