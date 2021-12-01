@@ -21,13 +21,6 @@ class NearbyListAdapter(context: Context, users: ArrayList<NearbyListUser?>) :
             val rowView = LayoutInflater.from(context).inflate(R.layout.listitem_nearby, parent, false)
             rowView.tag = ListitemNearbyBinding.bind(rowView) // cache binding
             rowView.tag
-
-//            val profileBtn = rowView.findViewById<Button>(R.id.profileButton)
-//            profileBtn.setOnClickListener {
-//                val intent = Intent(this.context, ViewProfile::class.java)
-//                intent.putExtra("profile_id", uid)
-//                startActivity(this.context, intent, null)
-//            }
         }) as ListitemNearbyBinding
 
         getItem(position)?.run {

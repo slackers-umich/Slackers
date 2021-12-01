@@ -22,6 +22,7 @@ import kotlin.reflect.full.declaredMemberProperties
 object NearbyListUserStore: CoroutineScope by MainScope() {
     private const val TAG = "NearbyListUserStore"
     val nearbyusers = arrayListOf<NearbyListUser?>()
+    val nearbyusersIds = arrayListOf<String>()
     private lateinit var mDatabase: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -41,8 +42,11 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
                     Log.d(TAG, "Got name ${it.child("name").value}")
                     name = it.child("name").value.toString()
                     imgUrl = it.child("photoUri").value.toString()
-                    nearbyusers.add(NearbyListUser(it.toString(), name, imgUrl))
+                    nearbyusers.add(NearbyListUser(it.key.toString(), name, imgUrl))
+                    nearbyusersIds.add(it.key.toString())
                     if (nearbyusers.size == n) {
+                        mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
+                            .setValue(nearbyusersIds)
                         completion()
                     }
                 }.addOnFailureListener{
