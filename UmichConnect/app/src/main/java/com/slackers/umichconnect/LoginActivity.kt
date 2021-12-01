@@ -24,13 +24,18 @@ class LoginActivity : AppCompatActivity() {
         val passField = findViewById<EditText>(R.id.passwordInputLogin)
         val signInButton = findViewById<Button>(R.id.loginButton)
         val createAccountButton = findViewById<Button>(R.id.createAccountRedirectButton)
-
+        val previewButton = findViewById<Button>(R.id.previewButton)
 
         signInButton.setOnClickListener {
             signIn(emailField.text.toString(), passField.text.toString())
         }
 
         createAccountButton.setOnClickListener {
+            val intent = Intent(this, CreateAccountActivity::class.java)
+            startActivity(intent)
+        }
+        //TODO change this
+        previewButton.setOnClickListener{
             val intent = Intent(this, CreateAccountActivity::class.java)
             startActivity(intent)
         }
