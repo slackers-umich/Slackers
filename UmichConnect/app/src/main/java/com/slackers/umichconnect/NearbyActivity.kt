@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -44,6 +45,7 @@ class NearbyActivity : AppCompatActivity() {
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    //private lateinit var bn: com.google.android.material.bottomnavigation.BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,7 @@ class NearbyActivity : AppCompatActivity() {
         view = ActivityNearbyBinding.inflate(layoutInflater)
         view.root.setBackgroundColor(Color.parseColor("#E0E0E0"))
         setContentView(view.root)
+        //setContentView(R.layout.activity_nearby)
 
         auth = FirebaseAuth.getInstance()
         database = Firebase.database.getReference("users")
@@ -122,6 +125,34 @@ class NearbyActivity : AppCompatActivity() {
                 }
             }
         }
+
+//        bn = findViewById(R.id.bottom_navigation)
+//        val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.page_1 -> {
+//                    // put your code here
+////                    val intent = Intent(this, SignUp::class.java)
+////                    startActivity(intent)
+//                    return@OnNavigationItemSelectedListener true
+//                }
+//                R.id.page_2 -> {
+//                    // put your code here
+////                    val intent = Intent(this, AcceptDeclinePage::class.java)
+////                    startActivity(intent)
+//                    return@OnNavigationItemSelectedListener true
+//                }
+//                R.id.page_3 -> {
+//                    // put your code here
+//                    return@OnNavigationItemSelectedListener true
+//                }
+//                R.id.page_4 -> {
+//                    // put your code here
+//                    return@OnNavigationItemSelectedListener true
+//                }
+//            }
+//            false
+//        }
+//        bn.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     override fun onStart() {

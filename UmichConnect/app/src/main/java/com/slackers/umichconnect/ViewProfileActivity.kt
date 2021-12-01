@@ -18,7 +18,6 @@ import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -45,6 +44,7 @@ class MyAppGlideModule : AppGlideModule() {
 }*/
 
 import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.database.*
 
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
@@ -175,10 +175,26 @@ class ViewProfileActivity : AppCompatActivity() {
 
         database = Firebase.database.reference
 
+        var senderName: String = "David"
         if (userId != null) {
 
             database.child("users").child(writeId).child("pending").child(userId).setValue(message)
+                FirebaseDatabase.getInstance().getReference().child("user").addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (postSnapshot in snapshot.children) {
+                            val currentUser = postSnapshot.getValue(User::class.java)
+                            Log.d("userid", userId)
+                            Log.d("userid2",currentUser?.uid.toString())
+                            if (userId == currentUser?.uid) {
+                                senderName = currentUser?.name.toString()
+                            }
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
 
+                var temp : List<String> = listOf(senderName)
+            database.child("users").child(writeId).child("pending").setValue(temp)
         }
 
 

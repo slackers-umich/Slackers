@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Patterns
 import android.view.View
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.ktx.database
@@ -27,6 +28,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var bn: com.google.android.material.bottomnavigation.BottomNavigationView
     var storageRef = FirebaseStorage.getInstance().reference
     var imageUri: Uri? = null
     var imagePath: String? = null
@@ -74,6 +76,34 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         viewInitializations()
+
+        bn = findViewById(R.id.bottom_navigation)
+        val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.page_1 -> {
+                    val intent = Intent(this, NearbyActivity::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_2 -> {
+                    // put your code here
+                    val intent = Intent(this, ConnectionsHome::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_3 -> {
+                    val intent = Intent(this, AcceptDeclinePage::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_4 -> {
+                    // put your code here
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        }
+        bn.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     //uploads image to firebase storage
