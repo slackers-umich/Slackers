@@ -57,16 +57,22 @@ class testNotifsActivity : AppCompatActivity() {
         var database = Firebase.database.reference
         database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                val children = snapshot.children
-                val children2 = database.child("users/" + uid + "/oldNearbyUsers/").get()
-                children.forEach {
-                    nearbyUsers.add(it.val())
-                }
+                for (h in snapshot.children){
+                    val user = h.getValue(String::class.java)
+                    Log.e("tag", user.toString())
 
-                if (children == children2)
+                    nearbyUsers.add(user.toString())
+
+                }
+                val children2 = database.child("users/" + uid + "/oldNearbyUsers/").get()
+
+
+
+
+                /*if (children == children2)
                 {
                     createNotification()
-                }
+                }*/
 
             }
 
