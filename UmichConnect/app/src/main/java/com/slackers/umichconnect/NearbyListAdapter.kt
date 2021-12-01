@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import androidx.core.content.ContextCompat.startActivity
 import coil.load
 import com.slackers.umichconnect.databinding.ListitemNearbyBinding
 
@@ -22,6 +24,12 @@ class NearbyListAdapter(context: Context, users: ArrayList<NearbyListUser?>) :
         }) as ListitemNearbyBinding
 
         getItem(position)?.run {
+            val profileBtn = listItemView.profileButton
+            profileBtn.setOnClickListener {
+                val intent = Intent(context, ViewProfileActivity::class.java)
+                intent.putExtra("profile_id", uid)
+                startActivity(context, intent, null)
+            }
             listItemView.usernameView.text = username
             listItemView.root.setBackgroundColor(Color.parseColor(if (position % 2 == 0) "#E0E0E0" else "#EEEEEE"))
             // show image
