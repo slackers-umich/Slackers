@@ -204,7 +204,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/pfpCreateAccount"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pfpCreateAccount"
+
                 android:clickable="true"/>
 
             <Button
