@@ -47,8 +47,8 @@ class NearbyActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+
         view = ActivityNearbyBinding.inflate(layoutInflater)
         view.root.setBackgroundColor(Color.parseColor("#E0E0E0"))
         setContentView(view.root)

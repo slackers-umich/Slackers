@@ -7,7 +7,7 @@ package com.slackers.umichconnect
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class NearbyListUser(var username: String? = null,
+class NearbyListUser(var uid: String? = null, var username: String? = null,
                      imageUrl: String? = null) {
     var imageUrl: String? by ImagePropDelegate(imageUrl)
 }
