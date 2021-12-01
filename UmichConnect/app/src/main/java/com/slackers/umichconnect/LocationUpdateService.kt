@@ -36,6 +36,7 @@ class LocationUpdateService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val runable = Runnable {
+            var update = 1
             notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val user = Firebase.auth.currentUser
@@ -74,7 +75,11 @@ class LocationUpdateService : Service() {
                         val tempOld = HashSet(oldNearbyUsers)
                         if (tempNearby != tempOld)
                         {
-                            createNotification("There are new users in the area. Come see who they are!")
+                            if (update == 0)
+                            {
+                                val intent = Intent(applicationContext, NearbyActivity::class.java)
+                                createNotification("There are new users in the area. Come see who they are!", intent)
+                            }
                             database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
                         }
                     }, 50)
@@ -89,8 +94,13 @@ class LocationUpdateService : Service() {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
                     Handler().postDelayed({
-                        createNotification("You have a new connection request!")
+                        if (update == 0)
+                        {
+                            val intent = Intent(applicationContext, NearbyActivity::class.java)
+                            createNotification("You have a new connection request!", intent)
+                        }
                         database.child("users/" + uid + "/update").setValue(0)
+                        update = 0
                     }, 50)
 
                 }
@@ -113,10 +123,9 @@ class LocationUpdateService : Service() {
         database.child("users/" + uid + "/update").setValue(1)
     }
 
-    private fun createNotification(contentText: String) {
-        val intent2 = Intent(this, NearbyActivity::class.java)
+    private fun createNotification(contentText: String, intentNotif: Intent) {
+        val intent2 = intentNotif
         val pendingIntent = PendingIntent.getActivity(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
-        val contentView = RemoteViews(packageName, R.layout.activity_after_notification)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
