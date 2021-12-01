@@ -30,13 +30,11 @@
             android:name=".LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".EditProfile"
+            android:name=".EditProfileActivity"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"
             android:theme="@style/Theme.UmichConnect.NoActionBar" />
-        <activity
-            android:name=".ViewProfile"
-            android:exported="true" />
+
         <activity
             android:name=".NearbyActivity"
             android:exported="true" />
