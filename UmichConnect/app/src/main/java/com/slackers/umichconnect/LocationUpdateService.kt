@@ -55,10 +55,6 @@ class LocationUpdateService : Service() {
             database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object:
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    var update: Int? = null
-                    database.child("users/" + uid + "/update").get().addOnSuccessListener{
-                        update = it.value.toString().toInt()
-                    }
                     val nearbyUsers : MutableList<String> = ArrayList()
                     val oldNearbyUsers: MutableList<String> = ArrayList()
                     //set nearby users and old nearby users to arraylists
@@ -78,11 +74,8 @@ class LocationUpdateService : Service() {
                         val tempOld = HashSet(oldNearbyUsers)
                         if (tempNearby != tempOld)
                         {
-                            if (update == 0)
-                            {
-                                createNotification("There are new users in the area. Come see who they are!")
-                                database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
-                            }
+                            createNotification("There are new users in the area. Come see who they are!")
+                            database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
                         }
                     }, 50)
                     database.child("users/" + uid + "/update").setValue(0)
@@ -94,16 +87,9 @@ class LocationUpdateService : Service() {
             database.child("users/" + uid + "/connections").addValueEventListener(object:
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    var update: Int? = null
-                    database.child("users/" + uid + "/update").get().addOnSuccessListener{
-                        update = it.value.toString().toInt()
-                    }
+
                     Handler().postDelayed({
-                        Log.e("tag1", "$update")
-                        if (update == 0)
-                        {
-                            createNotification("You have a new connection request!")
-                        }
+                        createNotification("You have a new connection request!")
                         database.child("users/" + uid + "/update").setValue(0)
                     }, 50)
 

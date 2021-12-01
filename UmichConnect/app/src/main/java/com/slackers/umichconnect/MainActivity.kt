@@ -54,16 +54,5 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-
-        var uid: String? = null
-        super.onStop()
-        val user = Firebase.auth.currentUser
-        user?.let {
-            uid = user.uid
-        }
-        var database = Firebase.database.reference
-        database.child("users/" + uid + "/update").setValue(1)
-    }
 
 }
