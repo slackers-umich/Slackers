@@ -44,7 +44,7 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_profile)
         val intent = Intent(this, LocationUpdateService::class.java)
         startService(intent)
-        
+
         val imageUpload = findViewById<ImageView>(R.id.pfpCreateAccount)
         val changePfpText = findViewById<TextView>(R.id.changePfpCreateAccount)
         val updateProfile = findViewById<Button>(R.id.updateAccount)
