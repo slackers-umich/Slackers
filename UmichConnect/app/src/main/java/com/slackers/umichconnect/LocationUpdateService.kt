@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -114,6 +115,7 @@ class LocationUpdateService : Service() {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
         }
         notificationManager.notify(1234, builder.build())
     }

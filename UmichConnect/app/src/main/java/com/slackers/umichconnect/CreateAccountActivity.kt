@@ -20,6 +20,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.auth.FirebaseUser
 
@@ -41,6 +42,7 @@ class CreateAccountActivity : AppCompatActivity() {
     var imageUri: Uri? = null
     var imagePath: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_account)
         auth = FirebaseAuth.getInstance()
