@@ -6,13 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".afterNotificationActivity">
 
-    <TextView
-        android:id="@+id/textView"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="There are new users in the area"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:layout_gravity="center_vertical"/>
+
+    <TextView
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="-13dp"
+        android:text="There are new users nearby. Come see who they are!"
+        android:textSize="20dp" />
 
 </RelativeLayout>
