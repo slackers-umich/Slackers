@@ -65,8 +65,6 @@ class LocationUpdateService : Service() {
                     //and get current nearby
                     getLocation()
                     doDiscovery()
-                    //get users nearby
-                    Log.e("test1", "testnotif")
                 }
             }, 0, 5000)
 
