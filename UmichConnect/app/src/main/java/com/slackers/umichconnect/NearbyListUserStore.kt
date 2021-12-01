@@ -29,6 +29,8 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
 
     fun setNearbyUsers(context: Context, nearby: Set<String>, completion: () -> Unit) {
         nearbyusers.clear()
+        nearbyusersIds.clear()
+        connections.clear()
         if (nearby.isEmpty()) {
             // TODO: make toast about no users in area
             mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")

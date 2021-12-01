@@ -34,9 +34,9 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, CreateAccountActivity::class.java)
             startActivity(intent)
         }
-        //TODO change this
+
         previewButton.setOnClickListener{
-            val intent = Intent(this, CreateAccountActivity::class.java)
+            val intent = Intent(this, AnonNearbyActivity::class.java)
             startActivity(intent)
         }
 

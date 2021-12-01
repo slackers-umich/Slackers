@@ -129,7 +129,8 @@ class AnonNearbyActivity : AppCompatActivity() {
                     // Permission is granted. Continue the action or workflow
                     // in your app.
                     Log.d(TAG, "Location permissions granted")
-                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                } else if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     // Explain to the user that the feature is unavailable because
                     // the features requires a permission that the user has denied.
                     // TODO: add toast to do above

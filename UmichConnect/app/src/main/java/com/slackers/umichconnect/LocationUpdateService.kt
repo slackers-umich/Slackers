@@ -106,17 +106,29 @@ class LocationUpdateService : Service() {
                     TODO("Not yet implemented")
                 }
             })
-            database.child("users/" + uid + "/connections").addValueEventListener(object:
+            database.child("users/" + uid + "/pending").addValueEventListener(object:
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
-                    Handler().postDelayed({
-                        if (update == 0)
-                        {
-                            val intent = Intent(applicationContext, NearbyActivity::class.java)
-                            createNotification("You have a new connection request!", intent)
+                    val pending : MutableList<String> = ArrayList()
+                    val oldPending: MutableList<String> = ArrayList()
+                    for (h in snapshot.children){
+                        val user = h.getValue(String::class.java)
+                        pending.add(user.toString())
+                    }
+                    database.child("users/" + uid + "/oldPending").get().addOnSuccessListener {
+                        for (h in it.children){
+                            val user = h.getValue(String::class.java)
+                            oldPending.add(user.toString())
                         }
-                        database.child("users/" + uid + "/update").setValue(0)
+                    }
+                    Handler().postDelayed({
+                        if (pending.size > oldPending.size) {
+                            if (update == 0) {
+                                val intent = Intent(applicationContext, NearbyActivity::class.java)
+                                createNotification("You have a new connection request!", intent)
+                            }
+                            database.child("users/" + uid + "/oldPending").setValue(pending)
+                        }
                         update = 0
                     }, 50)
 

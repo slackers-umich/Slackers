@@ -59,6 +59,9 @@ class NearbyActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val intent = Intent(this, LocationUpdateService::class.java)
+        startService(intent)
+
         nearbyListAdapter = NearbyListAdapter(this, nearbyusers)
         view.nearbyListView.setAdapter(nearbyListAdapter)
 
