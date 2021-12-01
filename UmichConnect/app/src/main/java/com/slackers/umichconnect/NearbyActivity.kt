@@ -128,43 +128,43 @@ class NearbyActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                PERMISSION_REQUEST_CODE
-            )
-        }
-        val cts = CancellationTokenSource()
-        fusedLocationClient.getCurrentLocation(PRIORITY_BALANCED_POWER_ACCURACY, cts.token)
-            .addOnSuccessListener { location : Location? ->
-                if (location != null) {
-                    // update location in db
-                    val lat = location.latitude
-                    val lng = location.longitude
-                    Log.d(TAG,
-                        "Current location received: $lat,$lng"
-                    )
-                    val currentUser = auth.currentUser
-                    database.child(currentUser!!.uid)
-                        .child("latitude").setValue(lat)
-                    database.child(currentUser.uid)
-                        .child("longitude").setValue(lng)
-                    currentLocation = location
-                    refreshTimeline()
-                }
-                // TODO: handle if null
-            }
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(
+//                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+//                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+//                ),
+//                PERMISSION_REQUEST_CODE
+//            )
+//        }
+//        val cts = CancellationTokenSource()
+//        fusedLocationClient.getCurrentLocation(PRIORITY_BALANCED_POWER_ACCURACY, cts.token)
+//            .addOnSuccessListener { location : Location? ->
+//                if (location != null) {
+//                    // update location in db
+//                    val lat = location.latitude
+//                    val lng = location.longitude
+//                    Log.d(TAG,
+//                        "Current location received: $lat,$lng"
+//                    )
+//                    val currentUser = auth.currentUser
+//                    database.child(currentUser!!.uid)
+//                        .child("latitude").setValue(lat)
+//                    database.child(currentUser.uid)
+//                        .child("longitude").setValue(lng)
+//                    currentLocation = location
+//                    refreshTimeline()
+//                }
+//                // TODO: handle if null
+//            }
     }
 
     override fun onResume() {
@@ -267,66 +267,69 @@ class NearbyActivity : AppCompatActivity() {
         val endLat = lat + 0.001
         val startLng = lng - 0.001
         val endLng = lng + 0.001
-        Log.d(TAG, "lat range: $startLat - $endLat")
-        Log.d(TAG, "lng range: $startLng - $endLng")
         database.orderByChild("latitude").startAt(startLat).endAt(endLat)
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                    Log.d(TAG, "Nearby lat user found: ${dataSnapshot.key}")
-                    dataSnapshot.key?.let { nearbyLat.add(it) }
-                } // ...
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
+            .get().addOnSuccessListener {
+            val nearbyLatObj = it.value as HashMap<*, *>
+            nearbyLatObj.forEach { (key, _) ->
+                Log.d(TAG, "Nearby lat user found: $key")
+                nearbyLat.add(key.toString())
+            }
+            database.orderByChild("longitude").startAt(startLng).endAt(endLng)
+                .get().addOnSuccessListener {
+                    val nearbyLngObj = it.value as HashMap<*, *>
+                    nearbyLngObj.forEach { (key, _) ->
+                        Log.d(TAG, "Nearby lng user found: $key")
+                        nearbyLng.add(key.toString())
+                    }
+                    val nearby = nearbyLat.intersect(nearbyLng)
+                    Log.d(TAG, "Nearby users: $nearby")
+                    setNearbyUsers(applicationContext, nearby) {
+                        runOnUiThread {
+                            // inform the list adapter that data set has changed
+                            // so that it can redraw the screen.
+                            Log.d(TAG, "setNearbyUsers() completed")
+                            nearbyListAdapter.notifyDataSetChanged()
+                        }
+                        // stop the refreshing animation upon completion:
+                        view.refreshContainer.isRefreshing = false
+                    }
+                }.addOnFailureListener{
+                    Log.e(TAG, "Error getting nearby lng users from firebase", it)
                 }
+        }.addOnFailureListener{
+            Log.e(TAG, "Error getting nearby lat users from firebase", it)
+        }
 
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-            })
-        database.orderByChild("longitude").startAt(startLng).endAt(endLng)
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                    Log.d(TAG, "Nearby lng user found: ${dataSnapshot.key}")
-                    dataSnapshot.key?.let { nearbyLng.add(it) }
-                } // ...
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-            })
-
-        // TODO: change nearbyMacs to be result of api call
-//        setNearbyUsers(applicationContext, nearbyMacs) {
-//            runOnUiThread {
-//                // inform the list adapter that data set has changed
-//                // so that it can redraw the screen.
-//                Log.d(TAG, "setNearbyUsers() completed")
-//                nearbyListAdapter.notifyDataSetChanged()
-//            }
-//            // stop the refreshing animation upon completion:
-//            view.refreshContainer.isRefreshing = false
-//        }
+//        database.orderByChild("latitude").startAt(startLat).endAt(endLat)
+//            .addChildEventListener(object : ChildEventListener {
+//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+//                    Log.d(TAG, "Nearby lat user found: ${dataSnapshot.key}")
+//                    dataSnapshot.key?.let { nearbyLat.add(it) }
+//                } // ...
+//
+//                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+//
+//                override fun onChildRemoved(snapshot: DataSnapshot) {}
+//
+//                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+//
+//                override fun onCancelled(error: DatabaseError) {}
+//            })
+//        database.orderByChild("longitude").startAt(startLng).endAt(endLng)
+//            .addChildEventListener(object : ChildEventListener {
+//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+//                    Log.d(TAG, "Nearby lng user found: ${dataSnapshot.key}")
+//                    dataSnapshot.key?.let { nearbyLng.add(it) }
+//                } // ...
+//
+//                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+//
+//                override fun onChildRemoved(snapshot: DataSnapshot) {}
+//
+//                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+//
+//                override fun onCancelled(error: DatabaseError) {}
+//            })
     }
 
     private fun significantMove(location: Location): Boolean {
