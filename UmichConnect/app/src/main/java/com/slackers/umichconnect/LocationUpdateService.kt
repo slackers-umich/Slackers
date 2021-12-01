@@ -55,20 +55,20 @@ class LocationUpdateService : Service() {
             database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object:
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    var update: Int? = null
+                    database.child("users/" + uid + "/update").get().addOnSuccessListener{
+                        update = it.value.toString().toInt()
+                    }
                     val nearbyUsers : MutableList<String> = ArrayList()
                     val oldNearbyUsers: MutableList<String> = ArrayList()
                     //set nearby users and old nearby users to arraylists
                     for (h in snapshot.children){
                         val user = h.getValue(String::class.java)
-                        Log.e("tag", user.toString())
                         nearbyUsers.add(user.toString())
                     }
                     database.child("users/" + uid + "/oldNearbyUsers").get().addOnSuccessListener {
-                        Log.e("tag", it.toString())
                         for (h in it.children){
-                            Log.e("tag", h.toString())
                             val user = h.getValue(String::class.java)
-                            Log.e("tag", "User: $user")
                             oldNearbyUsers.add(user.toString())
                         }
                     }
@@ -76,21 +76,44 @@ class LocationUpdateService : Service() {
                     Handler().postDelayed({
                         val tempNearby = HashSet(nearbyUsers)
                         val tempOld = HashSet(oldNearbyUsers)
-                        Log.e("tag", "Set1: $tempNearby")
-                        Log.e("tag", "Set2: $oldNearbyUsers")
                         if (tempNearby != tempOld)
                         {
-                            createNotification()
-                            database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
+                            if (update == 0)
+                            {
+                                createNotification("There are new users in the area. Come see who they are!")
+                                database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
+                            }
                         }
                     }, 50)
+                    database.child("users/" + uid + "/update").setValue(0)
                 }
-
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")
                 }
-
             })
+            database.child("users/" + uid + "/connections").addValueEventListener(object:
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var update: Int? = null
+                    database.child("users/" + uid + "/update").get().addOnSuccessListener{
+                        update = it.value.toString().toInt()
+                    }
+                    Handler().postDelayed({
+                        Log.e("tag1", "$update")
+                        if (update == 0)
+                        {
+                            createNotification("You have a new connection request!")
+                        }
+                        database.child("users/" + uid + "/update").setValue(0)
+                    }, 50)
+
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            }
+            )
+
         }
 
         val thread = Thread(runable)
@@ -98,9 +121,13 @@ class LocationUpdateService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        var database = Firebase.database.reference
+        database.child("users/" + uid + "/update").setValue(1)
+    }
 
-    @SuppressLint("WrongConstant")
-    private fun createNotification() {
+    private fun createNotification(contentText: String) {
         val intent2 = Intent(this, NearbyActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
         val contentView = RemoteViews(packageName, R.layout.activity_after_notification)
@@ -116,9 +143,9 @@ class LocationUpdateService : Service() {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentTitle("Umich Connect")
-                .setContentText("There are new users in the area")
+                .setContentText(contentText)
+                .setAutoCancel(true)
         }
         notificationManager.notify(1234, builder.build())
     }
