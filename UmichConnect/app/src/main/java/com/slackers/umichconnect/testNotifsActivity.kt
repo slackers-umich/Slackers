@@ -27,6 +27,7 @@ import kotlinx.coroutines.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.fixedRateTimer
 
+
 class testNotifsActivity : AppCompatActivity() {
     lateinit var notificationManager: NotificationManager
     lateinit var notificationChannel: NotificationChannel
@@ -34,8 +35,7 @@ class testNotifsActivity : AppCompatActivity() {
     private val channelId = "i.apps.notifications"
     private val description = "Test notification"
     var uid: String? = null
-    val nearbyUsers : MutableList<String> = ArrayList()
-    val oldNearbyUsers: MutableList<String> = ArrayList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,24 +55,39 @@ class testNotifsActivity : AppCompatActivity() {
         }, 0, 5000)
 
         var database = Firebase.database.reference
+        //on database change
         database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
+                val nearbyUsers : MutableList<String> = ArrayList()
+                val oldNearbyUsers: MutableList<String> = ArrayList()
+                //set nearby users and old nearby users to arraylists
                 for (h in snapshot.children){
                     val user = h.getValue(String::class.java)
                     Log.e("tag", user.toString())
-
                     nearbyUsers.add(user.toString())
-
                 }
-                val children2 = database.child("users/" + uid + "/oldNearbyUsers/").get()
+                database.child("users/" + uid + "/oldNearbyUsers").get().addOnSuccessListener {
+                    Log.e("tag", it.toString())
+                    for (h in it.children){
+                        Log.e("tag", h.toString())
+                        val user = h.getValue(String::class.java)
+                        Log.e("tag", "User: $user")
+                        oldNearbyUsers.add(user.toString())
+                    }
+                }
+                //delay the checker since .get() takes a bit
+                Handler().postDelayed({
+                    val tempNearby = HashSet(nearbyUsers)
+                    val tempOld = HashSet(oldNearbyUsers)
+                    Log.e("tag", "Set1: $tempNearby")
+                    Log.e("tag", "Set2: $oldNearbyUsers")
+                    if (tempNearby != tempOld)
+                    {
+                        createNotification()
+                        database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
+                    }
+                }, 50)
 
-
-
-
-                /*if (children == children2)
-                {
-                    createNotification()
-                }*/
 
             }
 
@@ -84,9 +99,7 @@ class testNotifsActivity : AppCompatActivity() {
     }
 
 
-
     private fun createNotification() {
-        val intent = Intent(this, afterNotificationActivity::class.java)
         val intent2 = Intent(this, NearbyActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
         val contentView = RemoteViews(packageName, R.layout.activity_after_notification)
@@ -102,6 +115,7 @@ class testNotifsActivity : AppCompatActivity() {
                 .setContent(contentView)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
+                .setContentIntent(pendingIntent)
         }
         notificationManager.notify(1234, builder.build())
     }
