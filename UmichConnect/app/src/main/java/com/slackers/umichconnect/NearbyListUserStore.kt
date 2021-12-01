@@ -23,6 +23,7 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
     private const val TAG = "NearbyListUserStore"
     val nearbyusers = arrayListOf<NearbyListUser?>()
     val nearbyusersIds = arrayListOf<String>()
+    var connections = arrayListOf<String>()
     private lateinit var mDatabase: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -33,24 +34,33 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
         auth = FirebaseAuth.getInstance()
         nearbyusers.clear()
         var n = nearby.size
-        nearby.forEach {
-            if (it == auth.currentUser!!.uid) { n -= 1 }
-            else {
-                var name: String = ""
-                var imgUrl: String = ""
-                mDatabase.child(it).get().addOnSuccessListener {
-                    Log.d(TAG, "Got name ${it.child("name").value}")
-                    name = it.child("name").value.toString()
-                    imgUrl = it.child("photoUri").value.toString()
-                    nearbyusers.add(NearbyListUser(it.key.toString(), name, imgUrl))
-                    nearbyusersIds.add(it.key.toString())
-                    if (nearbyusers.size == n) {
-                        mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
-                            .setValue(nearbyusersIds)
-                        completion()
+        mDatabase.child("${auth.currentUser!!.uid}/connections").get()
+            .addOnCompleteListener {
+            if (it.isSuccessful) {
+                it.result.children.forEach() {
+                    connections.add(it.value.toString())
+                }
+                Log.d(TAG, "Got connections: $connections")
+            }
+            nearby.forEach {
+                if (it == auth.currentUser!!.uid || it in connections) { n -= 1 }
+                else {
+                    var name: String = ""
+                    var imgUrl: String = ""
+                    mDatabase.child(it).get().addOnSuccessListener {
+                        name = it.child("name").value.toString()
+                        imgUrl = it.child("photoUri").value.toString()
+                        Log.d(TAG, "Got name $name")
+                        nearbyusers.add(NearbyListUser(it.key.toString(), name, imgUrl))
+                        nearbyusersIds.add(it.key.toString())
+                        if (nearbyusers.size == n) {
+                            mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
+                                .setValue(nearbyusersIds)
+                            completion()
+                        }
+                    }.addOnFailureListener{
+                        Log.e(TAG, "Error getting user info from firebase", it)
                     }
-                }.addOnFailureListener{
-                    Log.e(TAG, "Error getting user info from firebase", it)
                 }
             }
         }
