@@ -1,4 +1,3 @@
-import { getDatabase, ref, onValue, set, update, get, child } from "https://www.gstatic.com/firebasejs/9.4.1/firebase-database.js";
 const functions = require("firebase-functions");
 
 
@@ -13,12 +12,54 @@ const functions = require("firebase-functions");
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+const payload = {
+	token: FCMToken,
+    notification: {
+        title: 'cloud function demo',
+        body: message
+    },
+    data: {
+        body: message,
+    }
+};
+
+admin.messaging().send(payload).then((response) => {
+    // Response is a message ID string.
+    console.log('Successfully sent message:', response);
+    return {success: true};
+}).catch((error) => {
+    return {error: error.code};
+});
+
 exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
 .onCreate((snapshot, context) => {
     // Grab the current value of what was written to the Realtime Database.
     const original = snapshot.val();
     functions.logger.log('Uppercasing', context.params.pushId, original);
     const uppercase = original.toUpperCase();
+
+    const FCMToken = admin.database().ref('${pushId}/FCMToken').once('value')
+    const payload = {
+          token: FCMToken,
+          notification:{
+            title: 'UmichConnect',
+            body: 'There are new users in the area!',
+          },
+          data: {
+            body: 'There are new users in the area!',
+          }
+    };
+
+    admin.messaging().send(payload).then((response) => {
+      console.log('Success', response)
+      return {success: true};
+    }).catch((error) => {
+        return {error: error.code}
+    });
+
+
+
+
     // You must return a Promise when performing asynchronous tasks inside a Functions such as
     // writing to the Firebase Realtime Database.
     // Setting an "uppercase" sibling in the Realtime Database returns a Promise.

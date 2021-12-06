@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         //if user is signed in already, redirect them to the NearbyActivity page
         if(currentUser != null){
-            val intent = Intent(this, NearbyActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }

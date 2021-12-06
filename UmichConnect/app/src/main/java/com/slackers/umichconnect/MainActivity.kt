@@ -1,5 +1,6 @@
 package com.slackers.umichconnect
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,13 +8,16 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         val intent = Intent(this, LocationUpdateService::class.java)
         startService(intent)
         var uid: String? = null
