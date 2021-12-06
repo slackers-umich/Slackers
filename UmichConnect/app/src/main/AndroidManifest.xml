@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.slackers.umichconnect">
+    package="com.slackers.umichconnect" >
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -19,18 +19,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.UmichConnect">
+        android:theme="@style/Theme.UmichConnect" >
         <service
-            android:name=".LocationUpdateService"
-            android:exported="false">
+            android:name=".MessagingService"
+            android:enabled="true"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name=".LocationUpdateService"
+            android:exported="false" >
+        </service>
 
         <activity
             android:name=".LogoActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

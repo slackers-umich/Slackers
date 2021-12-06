@@ -68,7 +68,7 @@ class LocationUpdateService : Service() {
             // Get new FCM registration token
             val token = task.result.toString()
             var database = Firebase.database.reference
-            database.child("users/" + uid + "/FCMToken").setValue(token)
+            database.child("FCMTokens/" + uid).setValue(token)
             // Log and toast
             Log.e("tagger", token)
         })
@@ -90,7 +90,7 @@ class LocationUpdateService : Service() {
 
             var database = Firebase.database.reference
             //on database change
-            database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object :
+            /*database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val nearbyUsers: MutableList<String> = ArrayList()
@@ -121,13 +121,13 @@ class LocationUpdateService : Service() {
                             database.child("users/" + uid + "/oldNearbyUsers").setValue(nearbyUsers)
                         }
                     }, 50)
-                    database.child("users/" + uid + "/update").setValue(0)
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")
                 }
-            })
+            })*/
             database.child("users/" + uid + "/pending").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
