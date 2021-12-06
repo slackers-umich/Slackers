@@ -128,7 +128,7 @@ class LocationUpdateService : Service() {
                     TODO("Not yet implemented")
                 }
             })*/
-            database.child("users/" + uid + "/pending").addValueEventListener(object :
+            /*database.child("users/" + uid + "/pending").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val pending: MutableList<String> = ArrayList()
@@ -160,7 +160,7 @@ class LocationUpdateService : Service() {
                     TODO("Not yet implemented")
                 }
             }
-            )
+            )*/
 
         }
 
