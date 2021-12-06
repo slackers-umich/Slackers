@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "users": {
+      ".indexOn": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    ".read": true,
+    ".write": true
+  }
+}
