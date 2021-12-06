@@ -28,6 +28,9 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
           title: 'UmichConnect',
           body: 'There are new users in the area!',
         },
+        android:{
+          priority:"high"
+        }
       };
       
       console.log("HELLO2")
