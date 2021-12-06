@@ -13,7 +13,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
-.onWrite((snapshot, context) => {
+.onUpdate((snapshot, context) => {
     const pushId = context.params.pushId
     console.log(`/FCMTokens/${pushId}`)
     console.log("HELLO1")
@@ -48,36 +48,36 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
   });
 
   exports.checkConnections = functions.database.ref('/users/{pushId}/pending')
-.onWrite((snapshot, context) => {
-    const pushId = context.params.pushId
-    console.log(`/FCMTokens/${pushId}`)
-    console.log("HELLO1")
-    var FCMToken = null
-    admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
-      FCMToken = snapshot.val()
-      console.log(FCMToken)
+  .onUpdate((snapshot, context) => {
+      const pushId = context.params.pushId
+      console.log(`/FCMTokens/${pushId}`)
+      console.log("HELLO1")
+      var FCMToken = null
+      admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
+        FCMToken = snapshot.val()
+        console.log(FCMToken)
 
-      const payload = {
-        token: FCMToken,
-        notification:{
-          title: 'UmichConnect',
-          body: 'You have new connections!',
-        },
-      };
+        const payload = {
+          token: FCMToken,
+          notification:{
+            title: 'UmichConnect',
+            body: 'You have new a connection request!',
+          },
+        };
+        
+        console.log("HELLO2")
+        admin.messaging().send(payload).then((response) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', response);
+          return {success: true};
+        }).catch((error) => {
+          return {error: error.code};
+        });
+      })
+      .catch((error) => {
+        console.log(error.code)
+      })
+
       
-      console.log("HELLO2")
-      admin.messaging().send(payload).then((response) => {
-        // Response is a message ID string.
-        console.log('Successfully sent message:', response);
-        return {success: true};
-      }).catch((error) => {
-        return {error: error.code};
-      });
-    })
-    .catch((error) => {
-      console.log(error.code)
-    })
-
-    
-    console.log("HELLO3")
-  });
+      console.log("HELLO3")
+    });
