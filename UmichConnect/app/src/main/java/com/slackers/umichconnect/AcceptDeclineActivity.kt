@@ -60,9 +60,13 @@ class AcceptDeclineActivity: AppCompatActivity() {
             }
 
             database.child("users/" + uid + "/pending").get().addOnSuccessListener {
-                for (h in it.children){
-                    val user = h.getValue(String::class.java)
-                    names.add(user.toString())
+                for (child in it.getChildren()){
+                    database.child("users").child(child.getKey().toString()).child("name").get().addOnSuccessListener {
+                        Log.i("firebase", "Got value ${it.value}")
+                        names.add(it.value.toString())
+                    }
+                    //val user = h.getValue(String::class.java)
+                    //names.add(user.toString())
                 }
             }
 
