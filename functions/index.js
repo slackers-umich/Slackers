@@ -24,34 +24,28 @@ exports.findNearby = functions.database.ref('/users/{pushId}/latitude')
     currLat = snapshot.after.val()
     admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
       currLong = snapshot.val()
-    })
-    setTimeout(function(){
       startLat = currLat - 0.001
       endLat = currLat + 0.001
       startLong = currLong - 0.001
       endLong = currLong + 0.001
-    }, 50)
-    setTimeout(function(){
       admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
       .then((snapshot) => {
         keysLong = Object.keys(snapshot.val())
-      })
-      admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
-      .then((snapshot) => {
-        keysLat = Object.keys(snapshot.val())
-      })
-    }, 75)
-    setTimeout(function(){
-      var keysIntersected = keysLong.filter(value => keysLat.includes(value))
-      console.log(keysIntersected)
+        admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
+        .then((snapshot) => {
+          keysLat = Object.keys(snapshot.val())
+          var keysIntersected = keysLong.filter(value => keysLat.includes(value))
+          console.log(keysIntersected)
 
-      const index = keysIntersected.indexOf(pushId)
-      if (index > -1){
-        keysIntersected.splice(index, 1)
-      }
-      console.log(keysIntersected)
-      admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
-    }, 110)
+          const index = keysIntersected.indexOf(pushId)
+          if (index > -1){
+            keysIntersected.splice(index, 1)
+          }
+          console.log(keysIntersected)
+          admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
+        })
+      })
+    })
   }
   return null
 })
@@ -71,10 +65,6 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
             title: 'UmichConnect',
             body: 'There are new users in the area!',
           },
-          data: {
-            message : "my_custom_value",
-            body:"test"
-         },
           android:{
             priority:"high"
           }
@@ -92,31 +82,53 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
       })
     }
     else if (snapshot.after.val() != null){
+      const payload = null
       const beforeData = snapshot.before.val().filter(function (e) {return e != null;}); // data before the write
       const afterData = snapshot.after.val().filter(function (e) {return e != null;});// data after the write
+      const newUser = findNewUser(beforeData, afterData)
       if (!compareOldNewList(beforeData, afterData))
       {
         console.log(`/FCMTokens/${pushId}`)
         var FCMToken = null
         admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
           FCMToken = snapshot.val()
-          const payload = {
-            token: FCMToken,
-            notification:{
-              title: 'UmichConnect',
-              body: 'There are new users in the area!',
-            },
-            android:{
-              priority:"high"
-            }
-          };
-          admin.messaging().send(payload).then((response) => {
-            // Response is a message ID string.
-            console.log('Successfully sent message:', response);
-            return {success: true};
-          }).catch((error) => {
-            return {error: error.code};
-          });
+          //multiple new users
+          if (newUser == "plural")
+          {
+            payload = {
+              token: FCMToken,
+              notification:{
+                title: 'UmichConnect',
+                body: 'There are new users in the area!',
+              },
+              android:{
+                priority:"high"
+              }
+            };
+          }
+          else{
+            admin.database().ref(`/users/${newUser}/name/`).once('value')
+            .then((snapshot) => {
+              const name = snapshot.val()
+              payload = {
+                token: FCMToken,
+                notification:{
+                  title: 'UmichConnect',
+                  body: `${name} is nearby!`,
+                },
+                android:{
+                  priority:"high"
+                }
+              };
+              admin.messaging().send(payload).then((response) => {
+                // Response is a message ID string.
+                console.log('Successfully sent message:', response);
+                return {success: true};
+              }).catch((error) => {
+                return {error: error.code};
+              })
+            })
+          }        
         })
         .catch((error) => {
           console.log(error.code)
@@ -192,4 +204,19 @@ function compareOldNewList(oldData, newData){
   let checker = (arr, target) => target.every(v => arr.includes(v));
 
   return (checker(oldData, newData))
+}
+
+function findNewUser(oldData, newData){
+  if (oldData === undefined)
+  {
+    return "plural"
+  }
+
+  for (var i = 0; i < newData.length; i++)
+  {
+    if (oldData.find(element => element == newData[i]) == null)
+    {
+      return newData[i]
+    }
+  }
 }

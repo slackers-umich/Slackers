@@ -84,7 +84,7 @@ class LocationUpdateService : Service() {
                 override fun run() {
                     //and get current nearby
                     getLocation()
-                    doDiscovery()
+                    //doDiscovery()
                 }
             }, 0, 5000)
 
@@ -199,7 +199,7 @@ class LocationUpdateService : Service() {
         notificationManager.notify(1234, builder.build())
     }
 
-    private fun doDiscovery() {
+    /*private fun doDiscovery() {
         var database = Firebase.database.getReference("users")
         Log.d(TAG, "doDiscovery()")
 
@@ -240,7 +240,7 @@ class LocationUpdateService : Service() {
             }.addOnFailureListener {
                 Log.e(TAG, "Error getting nearby lat users from firebase", it)
             }
-    }
+    }*/
 
     private fun getLocation() {
         var database = Firebase.database.getReference("users")
