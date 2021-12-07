@@ -13,144 +13,229 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.findNearby = functions.database.ref('/users/{pushId}/latitude')
-.onWrite((snapshot, context) => {
-  var startLat = null, endLat = null, startLong = null, endLong = null
-  var currLong = null, currLat = null
-  var keysLat = null, keysLong = null
-  const pushId = context.params.pushId
-  console.log(pushId)
-  if (snapshot.after.val() != null)
-  { 
-    currLat = snapshot.after.val()
-    admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
-      currLong = snapshot.val()
-      startLat = currLat - 0.001
-      endLat = currLat + 0.001
-      startLong = currLong - 0.001
-      endLong = currLong + 0.001
-      admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
-      .then((snapshot) => {
-        keysLong = Object.keys(snapshot.val())
-        admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
-        .then((snapshot) => {
-          keysLat = Object.keys(snapshot.val())
-          var keysIntersected = keysLong.filter(value => keysLat.includes(value))
-          console.log(keysIntersected)
-
-          const index = keysIntersected.indexOf(pushId)
-          if (index > -1){
-            keysIntersected.splice(index, 1)
-          }
-          console.log(keysIntersected)
-          admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
-        })
-      })
-    })
-  }
-  return null
-})
-exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
-.onWrite((snapshot, context) => {
+  .onWrite((snapshot, context) => {
+    var startLat = null, endLat = null, startLong = null, endLong = null
+    var currLong = null, currLat = null
+    var keysLat = null, keysLong = null
     const pushId = context.params.pushId
-    
-    if (snapshot.before.val() == null)
-    { 
+    console.log(pushId)
+    if (snapshot.after.val() != null) {
+      currLat = snapshot.after.val()
+      admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
+        currLong = snapshot.val()
+        startLat = currLat - 0.001
+        endLat = currLat + 0.001
+        startLong = currLong - 0.001
+        endLong = currLong + 0.001
+        admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
+          .then((snapshot) => {
+            keysLong = Object.keys(snapshot.val())
+            admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
+              .then((snapshot) => {
+                keysLat = Object.keys(snapshot.val())
+                var keysIntersected = keysLong.filter(value => keysLat.includes(value))
+                console.log(keysIntersected)
+
+                const index = keysIntersected.indexOf(pushId)
+                if (index > -1) {
+                  keysIntersected.splice(index, 1)
+                }
+                console.log(keysIntersected)
+                admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
+              })
+          })
+      })
+    }
+    return null
+  })
+exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
+  .onWrite((snapshot, context) => {
+    const pushId = context.params.pushId
+    //if this is the first time the current user has logged in
+    if (snapshot.before.val() == null) {
       var FCMToken = null
-      admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
+      admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
         FCMToken = snapshot.val()
-        console.log(FCMToken)
         const payload = {
           token: FCMToken,
-          notification:{
+          notification: {
             title: 'UmichConnect',
             body: 'There are new users in the area!',
           },
-          android:{
-            priority:"high"
+          android: {
+            priority: "high"
           }
         };
         admin.messaging().send(payload).then((response) => {
           // Response is a message ID string.
           console.log('Successfully sent message:', response);
-          return {success: true};
+          return { success: true };
         }).catch((error) => {
-          return {error: error.code};
+          return { error: error.code };
         });
       })
-      .catch((error) => {
-        console.log(error.code)
-      })
+        .catch((error) => {
+          console.log(error.code)
+        })
     }
-    else if (snapshot.after.val() != null){
+    //if it is not the first time
+    else if (snapshot.after.val() != null) {
       var payload = null
-      const beforeData = snapshot.before.val().filter(function (e) {return e != null;}); // data before the write
-      const afterData = snapshot.after.val().filter(function (e) {return e != null;});// data after the write
+      const beforeData = snapshot.before.val().filter(function (e) { return e != null; }); // data before the write
+      const afterData = snapshot.after.val().filter(function (e) { return e != null; });// data after the write
       const newUser = findNewUser(beforeData, afterData)
-      if (!compareOldNewList(beforeData, afterData))
-      {
-        console.log(`/FCMTokens/${pushId}`)
+      if (!compareOldNewList(beforeData, afterData)) {
         var FCMToken = null
-        admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
+        admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
           FCMToken = snapshot.val()
           //multiple new users
-          if (newUser == "plural")
-          {
+          if (newUser == "plural") {
             payload = {
               token: FCMToken,
-              notification:{
+              notification: {
                 title: 'UmichConnect',
                 body: 'There are new users in the area!',
               },
-              android:{
-                priority:"high"
+              android: {
+                priority: "high"
               }
             };
           }
-          else{
-            console.log(newUser)
+          else {
+            var payload = null
             admin.database().ref(`/users/${newUser}/name/`).once('value')
+              .then((snapshot) => {
+                const name = snapshot.val()
+                payload = {
+                  token: FCMToken,
+                  notification: {
+                    title: 'UmichConnect',
+                    body: `${name} is nearby!`,
+                  },
+                  android: {
+                    priority: "high"
+                  }
+                };
+                admin.messaging().send(payload).then((response) => {
+                  // Response is a message ID string.
+                  console.log('Successfully sent message:', response);
+                  return { success: true };
+                }).catch((error) => {
+                  return { error: error.code };
+                })
+              })
+          }
+        })
+          .catch((error) => {
+            console.log(error.code)
+          })
+      }
+      //only when a user leaves the area and no other user has entered
+      if (compareOldNewList(beforeData, afterData) && (beforeData.length > afterData.length)) {
+        var FCMToken = null
+        admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
+          FCMToken = snapshot.val()
+          const leavingUser = findLeavingUser(beforeData, afterData)
+          var payload = null
+          admin.database().ref(`/users/${leavingUser}/name/`).once('value')
             .then((snapshot) => {
               const name = snapshot.val()
               payload = {
                 token: FCMToken,
-                notification:{
+                notification: {
                   title: 'UmichConnect',
-                  body: `${name} is nearby!`,
+                  body: `${name} has left the area`,
                 },
-                android:{
-                  priority:"high"
+                android: {
+                  priority: "high"
                 }
               };
               admin.messaging().send(payload).then((response) => {
                 // Response is a message ID string.
                 console.log('Successfully sent message:', response);
-                return {success: true};
+                return { success: true };
               }).catch((error) => {
-                return {error: error.code};
+                return { error: error.code };
               })
             })
-          }        
         })
+          .catch((error) => {
+            console.log(error.code)
+          })
+      }
+    }
+    if (snapshot.after.val() == null) {
+      const beforeData = snapshot.before.val().filter(function (e) { return e != null; }); // data before the write
+      var FCMToken = null
+      admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
+        FCMToken = snapshot.val()
+        const leavingUser = beforeData[0]
+        admin.database().ref(`/users/${leavingUser}/name/`).once('value')
+          .then((snapshot) => {
+            const name = snapshot.val()
+            payload = {
+              token: FCMToken,
+              notification: {
+                title: 'UmichConnect',
+                body: `${name} has left the area`,
+              },
+              android: {
+                priority: "high"
+              }
+            };
+            admin.messaging().send(payload).then((response) => {
+              // Response is a message ID string.
+              console.log('Successfully sent message:', response);
+              return { success: true };
+            }).catch((error) => {
+              return { error: error.code };
+            })
+          })
+      })
         .catch((error) => {
           console.log(error.code)
         })
-        }
-      }
-      return null
+    }
+    return null
   });
 
-  exports.checkConnections = functions.database.ref('/users/{pushId}/pending')
+exports.checkConnections = functions.database.ref('/users/{pushId}/pending')
   .onWrite((snapshot, context) => {
-      const pushId = context.params.pushId
-      var FCMToken = null
-      if (snapshot.before.val() == null)
-      { 
-        admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
+    const pushId = context.params.pushId
+    var FCMToken = null
+    if (snapshot.before.val() == null) {
+      admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
+        FCMToken = snapshot.val()
+        console.log(FCMToken)
+        const payload = {
+          token: FCMToken,
+          notification: {
+            title: 'UmichConnect',
+            body: 'You have new a connection request!',
+          },
+        };
+        admin.messaging().send(payload).then((response) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', response);
+          return { success: true };
+        }).catch((error) => {
+          return { error: error.code };
+        });
+      })
+        .catch((error) => {
+          console.log(error.code)
+        })
+    }
+    else if (snapshot.after.val() != null) {
+      const beforeData = snapshot.before.val().filter(function (e) { return e != null; }); // data before the write
+      const afterData = snapshot.after.val().filter(function (e) { return e != null; });// data after the write
+      if (beforeData.length < afterData.length) {
+        admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) => {
           FCMToken = snapshot.val()
           console.log(FCMToken)
           const payload = {
             token: FCMToken,
-            notification:{
+            notification: {
               title: 'UmichConnect',
               body: 'You have new a connection request!',
             },
@@ -158,48 +243,21 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
           admin.messaging().send(payload).then((response) => {
             // Response is a message ID string.
             console.log('Successfully sent message:', response);
-            return {success: true};
+            return { success: true };
           }).catch((error) => {
-            return {error: error.code};
+            return { error: error.code };
           });
         })
-        .catch((error) => {
-          console.log(error.code)
-        })
-      }
-      else if (snapshot.after.val() != null){
-        const beforeData = snapshot.before.val().filter(function (e) {return e != null;}); // data before the write
-        const afterData = snapshot.after.val().filter(function (e) {return e != null;});// data after the write
-        if (beforeData.length < afterData.length){
-          admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
-            FCMToken = snapshot.val()
-            console.log(FCMToken)
-            const payload = {
-              token: FCMToken,
-              notification:{
-                title: 'UmichConnect',
-                body: 'You have new a connection request!',
-              },
-            };
-            admin.messaging().send(payload).then((response) => {
-              // Response is a message ID string.
-              console.log('Successfully sent message:', response);
-              return {success: true};
-            }).catch((error) => {
-              return {error: error.code};
-            });
-          })
           .catch((error) => {
             console.log(error.code)
           })
-        }
       }
-      return null
-    });
+    }
+    return null
+  });
 //return true if the all the data in newData appears in oldData
-function compareOldNewList(oldData, newData){
-  if (oldData === undefined)
-  {
+function compareOldNewList(oldData, newData) {
+  if (oldData === undefined) {
     return false
   }
   let checker = (arr, target) => target.every(v => arr.includes(v));
@@ -207,17 +265,19 @@ function compareOldNewList(oldData, newData){
   return (checker(oldData, newData))
 }
 
-function findNewUser(oldData, newData){
-  if (oldData === undefined)
-  {
+function findNewUser(oldData, newData) {
+  if (oldData === undefined) {
     return "plural"
   }
   console.log(newData)
-  for (var i = 0; i < newData.length; i++)
-  {
-    if (oldData.find(element => element == newData[i]) == null)
-    {
+  for (var i = 0; i < newData.length; i++) {
+    if (oldData.find(element => element == newData[i]) == null) {
       return newData[i]
     }
   }
+}
+
+function findLeavingUser(oldData, newData) {
+  let difference = oldData.filter(element => !newData.includes(element))
+  return difference[0]
 }
