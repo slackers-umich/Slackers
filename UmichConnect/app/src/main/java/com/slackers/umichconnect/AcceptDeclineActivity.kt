@@ -25,6 +25,11 @@ class AcceptDeclineActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_accept_decline)
 
+        if (Firebase.auth.currentUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         bn = findViewById(R.id.bottom_navigation)
         val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {

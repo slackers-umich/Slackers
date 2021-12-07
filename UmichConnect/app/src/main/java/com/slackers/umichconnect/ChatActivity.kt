@@ -8,7 +8,9 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var chatRecyclerView: RecyclerView
@@ -24,6 +26,11 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        if (Firebase.auth.currentUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         val name = intent.getStringExtra("name")
         val receiverUid = intent.getStringExtra("uid")

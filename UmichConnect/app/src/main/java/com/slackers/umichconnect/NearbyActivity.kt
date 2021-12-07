@@ -55,7 +55,7 @@ class NearbyActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = Firebase.database.getReference("users")
         if (auth.currentUser == null){
-            val intent = Intent(this, CreateAccountActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
@@ -127,6 +127,9 @@ class NearbyActivity : AppCompatActivity() {
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
+                if (auth.currentUser == null){
+                    finish()
+                }
                 if (locationResult == null) {
                     Log.e(TAG, "Null location received")
                     return

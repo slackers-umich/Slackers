@@ -31,6 +31,11 @@ class ConnectionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_connections)
         var database = Firebase.database.reference
 
+        if (Firebase.auth.currentUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         mAuth = FirebaseAuth.getInstance()
         mDbRef = Firebase.database.getReference("users")
         userList = ArrayList()

@@ -44,6 +44,12 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
+
+        if (Firebase.auth.currentUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         val intent = Intent(this, LocationUpdateService::class.java)
         startService(intent)
 
@@ -73,6 +79,13 @@ class EditProfileActivity : AppCompatActivity() {
 
         updateProfile.setOnClickListener {
             profileEdit(nameField.getText().toString(), bioField.getText().toString())
+        }
+
+        val signOutButton = findViewById<Button>(R.id.SignOutButton)
+        signOutButton.setOnClickListener{
+            Firebase.auth.signOut()
+            val signOutIntent = Intent (this, LoginActivity::class.java)
+            startActivity(signOutIntent)
         }
 
         viewInitializations()
