@@ -271,6 +271,20 @@ class NearbyActivity : AppCompatActivity() {
         val endLng = lng + 0.001
         database.orderByChild("latitude").startAt(startLat).endAt(endLat)
             .get().addOnSuccessListener {
+                if (it.value == null) {
+                    val nearby: Set<String> = setOf()
+                    setNearbyUsers(applicationContext, nearby) {
+                        runOnUiThread {
+                            // inform the list adapter that data set has changed
+                            // so that it can redraw the screen.
+                            Log.d(TAG, "setNearbyUsers() completed")
+                            nearbyListAdapter.notifyDataSetChanged()
+                        }
+                        // stop the refreshing animation upon completion:
+                        view.refreshContainer.isRefreshing = false
+                    }
+                    return@addOnSuccessListener
+                }
                 val nearbyLatObj = it.value as HashMap<*, *>
                 nearbyLatObj.forEach { (key, _) ->
                     Log.d(TAG, "Nearby lat user found: $key")
@@ -278,6 +292,20 @@ class NearbyActivity : AppCompatActivity() {
                 }
                 database.orderByChild("longitude").startAt(startLng).endAt(endLng)
                     .get().addOnSuccessListener {
+                        if (it.value == null) {
+                            val nearby: Set<String> = setOf()
+                            setNearbyUsers(applicationContext, nearby) {
+                                runOnUiThread {
+                                    // inform the list adapter that data set has changed
+                                    // so that it can redraw the screen.
+                                    Log.d(TAG, "setNearbyUsers() completed")
+                                    nearbyListAdapter.notifyDataSetChanged()
+                                }
+                                // stop the refreshing animation upon completion:
+                                view.refreshContainer.isRefreshing = false
+                            }
+                            return@addOnSuccessListener
+                        }
                         val nearbyLngObj = it.value as HashMap<*, *>
                         nearbyLngObj.forEach { (key, _) ->
                             Log.d(TAG, "Nearby lng user found: $key")
