@@ -82,7 +82,7 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
       })
     }
     else if (snapshot.after.val() != null){
-      const payload = null
+      var payload = null
       const beforeData = snapshot.before.val().filter(function (e) {return e != null;}); // data before the write
       const afterData = snapshot.after.val().filter(function (e) {return e != null;});// data after the write
       const newUser = findNewUser(beforeData, afterData)
@@ -107,6 +107,7 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
             };
           }
           else{
+            console.log(newUser)
             admin.database().ref(`/users/${newUser}/name/`).once('value')
             .then((snapshot) => {
               const name = snapshot.val()
@@ -211,7 +212,7 @@ function findNewUser(oldData, newData){
   {
     return "plural"
   }
-
+  console.log(newData)
   for (var i = 0; i < newData.length; i++)
   {
     if (oldData.find(element => element == newData[i]) == null)
