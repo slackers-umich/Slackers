@@ -12,11 +12,56 @@ const functions = require("firebase-functions");
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+exports.findNearby = functions.database.ref('/users/{pushId}/latitude')
+.onWrite((snapshot, context) => {
+  var startLat = null, endLat = null, startLong = null, endLong = null
+  var currLong = null, currLat = null
+  var keysLat = null, keysLong = null
+  const pushId = context.params.pushId
+  console.log(pushId)
+  if (snapshot.after.val() != null)
+  { 
+    currLat = snapshot.after.val()
+    admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
+      currLong = snapshot.val()
+    })
+    setTimeout(function(){
+      startLat = currLat - 0.001
+      endLat = currLat + 0.001
+      startLong = currLong - 0.001
+      endLong = currLong + 0.001
+    }, 50)
+    setTimeout(function(){
+      admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
+      .then((snapshot) => {
+        keysLong = Object.keys(snapshot.val())
+      })
+      admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
+      .then((snapshot) => {
+        keysLat = Object.keys(snapshot.val())
+      })
+    }, 75)
+    setTimeout(function(){
+      var keysIntersected = keysLong.filter(value => keysLat.includes(value))
+      console.log(keysIntersected)
+
+      const index = keysIntersected.indexOf(pushId)
+      if (index > -1){
+        keysIntersected.splice(index, 1)
+      }
+      console.log(keysIntersected)
+      admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
+    }, 110)
+  }
+  return null
+})
 exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
 .onWrite((snapshot, context) => {
     const pushId = context.params.pushId
+    
     if (snapshot.before.val() == null)
     { 
+      var FCMToken = null
       admin.database().ref(`/FCMTokens/${pushId}`).once('value').then((snapshot) =>{
         FCMToken = snapshot.val()
         console.log(FCMToken)
@@ -78,6 +123,7 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
         })
         }
       }
+      return null
   });
 
   exports.checkConnections = functions.database.ref('/users/{pushId}/pending')
@@ -135,6 +181,7 @@ exports.checkNearby = functions.database.ref('/users/{pushId}/nearbyUsers')
           })
         }
       }
+      return null
     });
 //return true if the all the data in newData appears in oldData
 function compareOldNewList(oldData, newData){
