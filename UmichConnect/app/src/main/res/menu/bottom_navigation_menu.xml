@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/Connect" android:icon="@drawable/ic_baseline_people_alt_24" android:enabled="true" android:id="@+id/page_1"/>
+
+    <item android:title="@string/Messages" android:icon="@drawable/ic_baseline_comment_24" android:enabled="true" android:id="@+id/page_2"/>
+
+    <item android:title="@string/Notifications" android:icon="@drawable/ic_baseline_notifications_24" android:enabled="true" android:id="@+id/page_3"/>
+
+    <item android:title="@string/Profile" android:icon="@drawable/ic_baseline_tag_faces_24" android:enabled="true" android:id="@+id/page_4"/>
+
+</menu>

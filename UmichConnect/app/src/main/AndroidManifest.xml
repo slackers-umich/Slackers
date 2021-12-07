@@ -21,6 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UmichConnect">
         <activity
+            android:name=".ChatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ConnectionsActivity"
+            android:exported="true" />
+        <activity
             android:name=".AcceptDeclineActivity"
             android:exported="true" />
 
@@ -34,7 +40,7 @@
         </service>
         <service
             android:name=".LocationUpdateService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".LogoActivity"

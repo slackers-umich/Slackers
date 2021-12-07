@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -38,6 +39,7 @@ class NearbyActivity : AppCompatActivity() {
     private val PERMISSION_REQUEST_CODE = 1
     private var currentLocation: Location? = null
     private var storageRef = FirebaseStorage.getInstance().reference
+    private lateinit var bn: com.google.android.material.bottomnavigation.BottomNavigationView
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var locationCallback: LocationCallback
@@ -69,6 +71,33 @@ class NearbyActivity : AppCompatActivity() {
         view.refreshContainer.setOnRefreshListener {
             refreshTimeline()
         }
+
+        bn = findViewById(R.id.bottom_navigation)
+        val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.page_1 -> {
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_2 -> {
+                    // put your code here
+                    val intent = Intent(this, ConnectionsActivity::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_3 -> {
+                    val intent = Intent(this, AcceptDeclineActivity::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.page_4 -> {
+                    val intent = Intent(this, EditProfileActivity::class.java)
+                    startActivity(intent)
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        }
+        bn.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         // TODO: request background location?
         // https://developer.android.com/training/location/permissions#request-background-location

@@ -21,4 +21,9 @@
     <string name="title_activity_test_notifs">testNotifs</string>
     <string name="prof_button">See profile</string>
     <string name="msg_token_fmt" />
+
+    <string name="Connect">Connect</string>
+    <string name="Messages">Messages</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Profile">Profile</string>
 </resources>

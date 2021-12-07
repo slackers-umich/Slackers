@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         //if user is signed in already, redirect them to the NearbyActivity page
         if(currentUser != null){
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, NearbyActivity::class.java)
             startActivity(intent)
         }
     }
@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, NearbyActivity::class.java)
                     startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.

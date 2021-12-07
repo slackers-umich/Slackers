@@ -71,6 +71,7 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
                         }
                     }
                 }
+                if (n < 1) { completion() }
             }
     }
 
