@@ -102,6 +102,9 @@ class ConnectionsActivity : AppCompatActivity() {
                 }
             }
 
+        val intent = Intent(this, LocationUpdateService::class.java)
+        startService(intent)
+
 //        mDbRef.child("user").addValueEventListener(object: ValueEventListener{
 //            override fun onDataChange(snapshot: DataSnapshot) {
 //                userList.clear()

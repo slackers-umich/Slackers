@@ -103,6 +103,9 @@ class EditProfileActivity : AppCompatActivity() {
             false
         }
         bn.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        val serviceIntent = Intent(this, LocationUpdateService::class.java)
+        startService(serviceIntent)
     }
 
     //uploads image to firebase storage

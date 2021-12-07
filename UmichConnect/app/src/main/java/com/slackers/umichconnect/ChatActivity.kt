@@ -68,5 +68,8 @@ class ChatActivity : AppCompatActivity() {
             }
             messageBox.setText("")
         }
+
+        val intent = Intent(this, LocationUpdateService::class.java)
+        startService(intent)
     }
 }

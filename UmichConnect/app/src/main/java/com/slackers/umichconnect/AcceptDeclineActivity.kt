@@ -58,6 +58,9 @@ class AcceptDeclineActivity: AppCompatActivity() {
         val listView: ListView = findViewById(R.id.accept_decline_listview)
         listView.adapter = MyCustomAdapter(this)
 
+        val intent = Intent(this, LocationUpdateService::class.java)
+        startService(intent)
+
 //        listView.setAdapter(adapter)
 
 

@@ -166,6 +166,8 @@ class ViewProfileActivity : AppCompatActivity() {
             finish()
         }
 
+        val serviceIntent = Intent(this, LocationUpdateService::class.java)
+        startService(serviceIntent)
     }
 
 
