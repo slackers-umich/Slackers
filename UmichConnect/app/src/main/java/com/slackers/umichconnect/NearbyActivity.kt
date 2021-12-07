@@ -16,14 +16,12 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
-import com.google.android.gms.location.LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -32,13 +30,13 @@ import com.google.firebase.database.DataSnapshot
 
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
     private val PERMISSION_REQUEST_CODE = 1
     private var currentLocation: Location? = null
-    private var storageRef = FirebaseStorage.getInstance().reference
     private lateinit var bn: com.google.android.material.bottomnavigation.BottomNavigationView
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -154,6 +152,20 @@ class NearbyActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val uid = auth.currentUser?.uid
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("tagger", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            val token = task.result.toString()
+            val db = Firebase.database.reference
+            db.child("FCMTokens/$uid").setValue(token)
+            // Log and toast
+            Log.e("tagger", token)
+        })
     }
 
     override fun onStart() {
