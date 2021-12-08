@@ -3,7 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2734375" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/edt_background.xml" value="0.2734375" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_baseline_comment_24.xml" value="0.2734375" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_baseline_people_alt_24.xml" value="0.2734375" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_baseline_tag_faces_24.xml" value="0.2734375" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2734375" />
+        <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/drawable/message_box_background.xml" value="0.2734375" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_accept_decline_listview_item.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page.xml" value="0.1875" />
         <entry key="..\:/Users/azshe/Documents/GitHub/Slackers/UmichConnect/app/src/main/res/layout/activity_connections_page_listview_item.xml" value="0.1875" />
