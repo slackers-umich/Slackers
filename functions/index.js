@@ -12,7 +12,7 @@ const functions = require("firebase-functions");
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-exports.findNearby = functions.database.ref('/users/{pushId}/latitude')
+exports.findNearby = functions.database.ref('/users/{pushId}/location')
   .onWrite((snapshot, context) => {
     var startLat = null, endLat = null, startLong = null, endLong = null
     var currLong = null, currLat = null
@@ -20,30 +20,32 @@ exports.findNearby = functions.database.ref('/users/{pushId}/latitude')
     const pushId = context.params.pushId
     console.log(pushId)
     if (snapshot.after.val() != null) {
-      currLat = snapshot.after.val()
-      admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
-        currLong = snapshot.val()
-        startLat = currLat - 0.001
-        endLat = currLat + 0.001
-        startLong = currLong - 0.001
-        endLong = currLong + 0.001
-        admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
-          .then((snapshot) => {
-            keysLong = Object.keys(snapshot.val())
-            admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
-              .then((snapshot) => {
-                keysLat = Object.keys(snapshot.val())
-                var keysIntersected = keysLong.filter(value => keysLat.includes(value))
-                console.log(keysIntersected)
-
-                const index = keysIntersected.indexOf(pushId)
-                if (index > -1) {
-                  keysIntersected.splice(index, 1)
-                }
-                console.log(keysIntersected)
-                admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
-              })
-          })
+      admin.database().ref(`users/${pushId}/latitude`).once('value').then((snapshot) => {
+        currLat = snapshot.val()
+        admin.database().ref(`users/${pushId}/longitude`).once('value').then((snapshot) => {
+          currLong = snapshot.val()
+          startLat = currLat - 0.001
+          endLat = currLat + 0.001
+          startLong = currLong - 0.001
+          endLong = currLong + 0.001
+          admin.database().ref(`users`).orderByChild('latitude').startAt(startLat).endAt(endLat).once('value')
+            .then((snapshot) => {
+              keysLong = Object.keys(snapshot.val())
+              admin.database().ref(`users`).orderByChild('longitude').startAt(startLong).endAt(endLong).once('value')
+                .then((snapshot) => {
+                  keysLat = Object.keys(snapshot.val())
+                  var keysIntersected = keysLong.filter(value => keysLat.includes(value))
+                  console.log(keysIntersected)
+  
+                  const index = keysIntersected.indexOf(pushId)
+                  if (index > -1) {
+                    keysIntersected.splice(index, 1)
+                  }
+                  console.log(keysIntersected)
+                  admin.database().ref(`users/${pushId}/nearbyUsers`).set(keysIntersected)
+                })
+            })
+        })
       })
     }
     return null

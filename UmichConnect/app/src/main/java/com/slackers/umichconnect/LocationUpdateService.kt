@@ -78,17 +78,28 @@ class LocationUpdateService : Service() {
             var update = 1
             notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
+            var database = Firebase.database.reference
 
             Timer().scheduleAtFixedRate(object : TimerTask() {
                 override fun run() {
-                    //and get current nearby
                     getLocation()
-                    //doDiscovery()
+
+                    database.child("users/" + uid + "/location").get().addOnSuccessListener {
+                        val num = it.value.toString().toInt()
+                        Log.e("urmom", num.toString())
+                        if (num == 0)
+                        {
+                            database.child("users/" + uid + "/location").setValue(1)
+                        }
+                        else{
+                            database.child("users/" + uid + "/location").setValue(0)
+                        }
+
+                    }
                 }
             }, 0, 5000)
 
-            var database = Firebase.database.reference
+
             //on database change
             /*database.child("users/" + uid + "/nearbyUsers").addValueEventListener(object :
                 ValueEventListener {
