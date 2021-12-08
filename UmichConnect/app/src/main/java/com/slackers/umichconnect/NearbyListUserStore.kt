@@ -33,8 +33,8 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
         connections.clear()
         if (nearby.isEmpty()) {
             // TODO: make toast about no users in area
-            mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
-                .setValue(nearbyusersIds)
+//            mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
+//                .setValue(nearbyusersIds)
             completion()
             return
         }
@@ -62,8 +62,8 @@ object NearbyListUserStore: CoroutineScope by MainScope() {
                             nearbyusers.add(NearbyListUser(it.key.toString(), name, imgUrl))
                             nearbyusersIds.add(it.key.toString())
                             if (nearbyusers.size == n) {
-                                mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
-                                    .setValue(nearbyusersIds)
+//                                mDatabase.child("${auth.currentUser!!.uid}/nearbyUsers")
+//                                    .setValue(nearbyusersIds)
                                 completion()
                             }
                         }.addOnFailureListener{

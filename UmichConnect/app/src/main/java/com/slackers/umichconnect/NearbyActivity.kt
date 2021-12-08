@@ -36,14 +36,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 class NearbyActivity : AppCompatActivity() {
     private val TAG = "NearbyActivity"
     private val PERMISSION_REQUEST_CODE = 1
-    private var currentLocation: Location? = null
     private lateinit var bn: com.google.android.material.bottomnavigation.BottomNavigationView
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
-    private lateinit var locationCallback: LocationCallback
     private lateinit var view: ActivityNearbyBinding
     private lateinit var nearbyListAdapter: NearbyListAdapter
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,45 +113,6 @@ class NearbyActivity : AppCompatActivity() {
                 PERMISSION_REQUEST_CODE
             )
         }
-//        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-//            if (!granted) {
-//                Log.d(TAG, "Fine location access denied")
-//                finish()
-//            }
-//        }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                if (auth.currentUser == null){
-                    finish()
-                }
-                if (locationResult == null) {
-                    Log.e(TAG, "Null location received")
-                    return
-                }
-                for (location in locationResult.locations) {
-                    val lat = location.latitude
-                    val lng = location.longitude
-                    Log.d(TAG,
-                        "New location received: $lat,$lng"
-                    )
-                    if (significantMove(location)) {
-                        Log.d(TAG, "Significant location change")
-                        // update location in db
-                        val currentUser = auth.currentUser
-//                        val hash: String = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
-                        database.child(currentUser!!.uid)
-                            .child("latitude").setValue(lat)
-                        database.child(currentUser.uid)
-                            .child("longitude").setValue(lng)
-                        currentLocation = location
-                        refreshTimeline()
-                    }
-                }
-            }
-        }
 
         val uid = auth.currentUser?.uid
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -171,57 +129,19 @@ class NearbyActivity : AppCompatActivity() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(
-//                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-//                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-//                ),
-//                PERMISSION_REQUEST_CODE
-//            )
-//        }
-//        val cts = CancellationTokenSource()
-//        fusedLocationClient.getCurrentLocation(PRIORITY_BALANCED_POWER_ACCURACY, cts.token)
-//            .addOnSuccessListener { location : Location? ->
-//                if (location != null) {
-//                    // update location in db
-//                    val lat = location.latitude
-//                    val lng = location.longitude
-//                    Log.d(TAG,
-//                        "Current location received: $lat,$lng"
-//                    )
-//                    val currentUser = auth.currentUser
-//                    database.child(currentUser!!.uid)
-//                        .child("latitude").setValue(lat)
-//                    database.child(currentUser.uid)
-//                        .child("longitude").setValue(lng)
-//                    currentLocation = location
-//                    refreshTimeline()
-//                }
-//                // TODO: handle if null
-//            }
-    }
-
     override fun onResume() {
         super.onResume()
 
-        startLocationUpdates()
+        refreshTimeline()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopLocationUpdates()
+        val currentUser = auth.currentUser
+        database.child(currentUser!!.uid)
+            .child("latitude").removeValue()
+        database.child(currentUser.uid)
+            .child("longitude").removeValue()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -238,206 +158,45 @@ class NearbyActivity : AppCompatActivity() {
                 } else {
                     // Explain to the user that the feature is unavailable because
                     // the features requires a permission that the user has denied.
-                    // At the same time, respect the user's decision. Don't link to
-                    // system settings in an effort to convince the user to change
-                    // their decision.
                     // TODO: add toast to do above
                     Log.e(TAG, "Location permissions denied")
                     finish()
                 }
                 return
             }
-
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
-            else -> {
-                // Ignore all other requests.
-            }
         }
-    }
-
-    private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // TODO: change?
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                PERMISSION_REQUEST_CODE
-            )
-        }
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-            locationCallback,
-            Looper.getMainLooper())
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun refreshTimeline() {
         Log.d(TAG, "refreshTimeline()")
         view.refreshContainer.isRefreshing = true
-        doDiscovery()
+        showNearby()
     }
 
-    /**
-     * Find nearby users given device location
-     */
-    private fun doDiscovery() {
-        Log.d(TAG, "doDiscovery()")
-
-        // TODO: make api call to get nearby users using coordinates
-        if (currentLocation == null) {
-            Log.e(TAG, "Location is null, can't do discovery")
-            return
-        }
-        val nearbyLat = mutableSetOf<String>()
-        val nearbyLng = mutableSetOf<String>()
-        val lat = currentLocation!!.latitude
-        val lng = currentLocation!!.longitude
-        val startLat = lat - 0.001
-        val endLat = lat + 0.001
-        val startLng = lng - 0.001
-        val endLng = lng + 0.001
-        database.orderByChild("latitude").startAt(startLat).endAt(endLat)
-            .get().addOnSuccessListener {
-                if (it.value == null) {
-                    val nearby: Set<String> = setOf()
-                    setNearbyUsers(applicationContext, nearby) {
-                        runOnUiThread {
-                            // inform the list adapter that data set has changed
-                            // so that it can redraw the screen.
-                            Log.d(TAG, "setNearbyUsers() completed")
-                            nearbyListAdapter.notifyDataSetChanged()
-                        }
-                        // stop the refreshing animation upon completion:
-                        view.refreshContainer.isRefreshing = false
-                    }
-                    return@addOnSuccessListener
+    private fun showNearby() {
+        Log.d(TAG, "showNearby()")
+        val currentUser = auth.currentUser
+        database.child("${currentUser!!.uid}/nearbyUsers").get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val nearby: MutableSet<String> = mutableSetOf()
+                it.result.children.forEach() {
+                    nearby.add(it.value.toString())
                 }
-                val nearbyLatObj = it.value as HashMap<*, *>
-                nearbyLatObj.forEach { (key, _) ->
-                    Log.d(TAG, "Nearby lat user found: $key")
-                    nearbyLat.add(key.toString())
-                }
-                database.orderByChild("longitude").startAt(startLng).endAt(endLng)
-                    .get().addOnSuccessListener {
-                        if (it.value == null) {
-                            val nearby: Set<String> = setOf()
-                            setNearbyUsers(applicationContext, nearby) {
-                                runOnUiThread {
-                                    // inform the list adapter that data set has changed
-                                    // so that it can redraw the screen.
-                                    Log.d(TAG, "setNearbyUsers() completed")
-                                    nearbyListAdapter.notifyDataSetChanged()
-                                }
-                                // stop the refreshing animation upon completion:
-                                view.refreshContainer.isRefreshing = false
-                            }
-                            return@addOnSuccessListener
-                        }
-                        val nearbyLngObj = it.value as HashMap<*, *>
-                        nearbyLngObj.forEach { (key, _) ->
-                            Log.d(TAG, "Nearby lng user found: $key")
-                            nearbyLng.add(key.toString())
-                        }
-                        val nearby = nearbyLat.intersect(nearbyLng)
-                        Log.d(TAG, "Nearby users: $nearby")
-                        setNearbyUsers(applicationContext, nearby) {
-                            runOnUiThread {
-                                // inform the list adapter that data set has changed
-                                // so that it can redraw the screen.
-                                Log.d(TAG, "setNearbyUsers() completed")
-                                nearbyListAdapter.notifyDataSetChanged()
-                            }
-                            // stop the refreshing animation upon completion:
-                            view.refreshContainer.isRefreshing = false
-                        }
-                    }.addOnFailureListener{
-                        Log.e(TAG, "Error getting nearby lng users from firebase", it)
+                Log.d(TAG, "Got nearbyUsers: $nearby")
+                setNearbyUsers(applicationContext, nearby) {
+                    runOnUiThread {
+                        // inform the list adapter that data set has changed
+                        // so that it can redraw the screen.
+                        Log.d(TAG, "setNearbyUsers() completed")
+                        nearbyListAdapter.notifyDataSetChanged()
                     }
-            }.addOnFailureListener{
-                Log.e(TAG, "Error getting nearby lat users from firebase", it)
+                    // stop the refreshing animation upon completion:
+                    view.refreshContainer.isRefreshing = false
+                }
             }
-
-//        database.orderByChild("latitude").startAt(startLat).endAt(endLat)
-//            .addChildEventListener(object : ChildEventListener {
-//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-//                    Log.d(TAG, "Nearby lat user found: ${dataSnapshot.key}")
-//                    dataSnapshot.key?.let { nearbyLat.add(it) }
-//                } // ...
-//
-//                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-//
-//                override fun onChildRemoved(snapshot: DataSnapshot) {}
-//
-//                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-//
-//                override fun onCancelled(error: DatabaseError) {}
-//            })
-//        database.orderByChild("longitude").startAt(startLng).endAt(endLng)
-//            .addChildEventListener(object : ChildEventListener {
-//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-//                    Log.d(TAG, "Nearby lng user found: ${dataSnapshot.key}")
-//                    dataSnapshot.key?.let { nearbyLng.add(it) }
-//                } // ...
-//
-//                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-//
-//                override fun onChildRemoved(snapshot: DataSnapshot) {}
-//
-//                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-//
-//                override fun onCancelled(error: DatabaseError) {}
-//            })
-    }
-
-    private fun significantMove(location: Location): Boolean {
-        if (currentLocation == null) {
-            return true
+            else {
+                Log.e(TAG, "Error retrieving nearbyUsers from database")
+            }
         }
-        val lat1 = location.latitude
-        val lon1 = location.longitude
-        val lat2 = currentLocation!!.latitude
-        val lon2 = currentLocation!!.longitude
-        if (getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) > 0.05) {
-            return true
-        }
-        return false
-    }
-
-    private fun getDistanceFromLatLonInKm(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
-    ): Double {
-        val R = 6371 // Radius of the earth in km
-        val dLat = deg2rad(lat2 - lat1)  // deg2rad below
-        val dLon = deg2rad(lon2 - lon1)
-        val a =
-            sin(dLat / 2) * sin(dLat / 2) +
-                    cos(deg2rad(lat1)) * cos(deg2rad(lat2)) *
-                    sin(dLon / 2) * sin(dLon / 2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return R * c // Distance in km
-    }
-
-    private fun deg2rad(deg: Double): Double {
-        return deg * (Math.PI/180)
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,12 +27,14 @@ class AnonNearbyListAdapter(context: Context, users: ArrayList<NearbyListUser?>)
             listItemView.root.setBackgroundColor(Color.parseColor(if (position % 2 == 0) "#E0E0E0" else "#EEEEEE"))
             // show image
             imageUrl?.let {
+                Log.d("AnonNearbyListAdapter", "image found")
                 listItemView.userImageView.setVisibility(View.VISIBLE)
                 listItemView.userImageView.load(it) {
                     crossfade(true)
                     crossfade(1000)
                 }
             } ?: run {
+                Log.d("AnonNearbyListAdapter", "no image found")
                 listItemView.userImageView.setVisibility(View.GONE)
                 listItemView.userImageView.setImageBitmap(null)
             }
