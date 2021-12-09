@@ -28,7 +28,7 @@ import com.google.firebase.auth.FirebaseUser
 @IgnoreExtraProperties
 data class User(
     var userId: String? = null, val email: String? = null, val name: String? = null,
-    val bio: String? = null, val photoUri: String? = null, val location: String? =null) {
+    val bio: String? = null, val photoUri: String? = null, val location: Int? =null) {
     // Null default values create a no-argument default constructor, which is needed
     // for deserialization from a DataSnapshot.
 }
@@ -149,7 +149,7 @@ class CreateAccountActivity : AppCompatActivity() {
         longitude: Double
     ) {
         database = Firebase.database.reference
-        val user = User(userId, email, name, bio, photoUri, "")
+        val user = User(userId, email, name, bio, photoUri, 1)
 
         database.child("users").child(userId).setValue(user)
     }
