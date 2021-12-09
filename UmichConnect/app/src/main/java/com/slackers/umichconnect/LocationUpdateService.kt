@@ -3,7 +3,6 @@ package com.slackers.umichconnect
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -41,6 +40,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 
 class LocationUpdateService : Service() {
+    private val TAG = "LocationUpdateService"
     lateinit var notificationManager: NotificationManager
     lateinit var notificationChannel: NotificationChannel
     private var currentLocation: Location? = null
@@ -86,7 +86,7 @@ class LocationUpdateService : Service() {
 
                     database.child("users/" + uid + "/location").get().addOnSuccessListener {
                         val num = it.value.toString().toInt()
-                        Log.e("urmom", num.toString())
+                        Log.e(TAG, num.toString())
                         if (num == 0)
                         {
                             database.child("users/" + uid + "/location").setValue(1)
@@ -254,6 +254,7 @@ class LocationUpdateService : Service() {
     }*/
 
     private fun getLocation() {
+        Log.d(TAG, "getLocation()")
         var database = Firebase.database.getReference("users")
         var auth = FirebaseAuth.getInstance()
 
@@ -279,11 +280,19 @@ class LocationUpdateService : Service() {
                         "Current location received: $lat,$lng"
                     )
                     val currentUser = auth.currentUser
-                    database.child(currentUser!!.uid)
-                        .child("latitude").setValue(lat)
-                    database.child(currentUser.uid)
-                        .child("longitude").setValue(lng)
+                    if (currentUser != null) {
+                        database.child(currentUser!!.uid)
+                            .child("latitude").setValue(lat)
+                        database.child(currentUser.uid)
+                            .child("longitude").setValue(lng)
+                    }
                     currentLocation = location
+                }
+                else {
+                    Log.e(
+                        TAG,
+                        "Current location returned as null"
+                    )
                 }
             }
     }

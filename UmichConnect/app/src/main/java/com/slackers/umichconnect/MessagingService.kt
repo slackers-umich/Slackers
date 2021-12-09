@@ -17,6 +17,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MessagingService : FirebaseMessagingService() {
+    private val TAG = "MessagingService"
     lateinit var notificationManager: NotificationManager
     lateinit var notificationChannel: NotificationChannel
     lateinit var builder: Notification.Builder
@@ -24,9 +25,8 @@ class MessagingService : FirebaseMessagingService() {
     private val description = "Test notification"
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.e("urmom2", "test")
         val intent = Intent(applicationContext, NearbyActivity::class.java)
-        Log.e("urmom2", remoteMessage.notification?.body.toString())
+        Log.d(TAG, "Message received: ${remoteMessage.notification?.body.toString()}")
         notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotification(remoteMessage.notification?.body.toString(), intent)
